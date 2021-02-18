@@ -25,7 +25,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 * 1TB of RAM, 600KB per sensor means the hard limit of 1M sensors
 * 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
-* 64 bytes/packer or 64MB/s or 1Gb/s connection
+* 64 bytes/packet or 64MB/s or 1Gb/s connection
 
 
 # Software components
