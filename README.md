@@ -27,6 +27,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
 
+300 lines in Go? **isn't it too trivial?**
 
 # Software components
 
