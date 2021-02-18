@@ -28,8 +28,15 @@ This is not achievable in 3 hours of coding.
 * 64 bytes/packer or 64MB/s or 1Gb/s connection
 
 
+# Software components
+
+* Lockfree hashtable Ehernet address to sensor index
+* Lockfree hashtable sensor index to the Eternet address
+* 600K lock free accumulators
+
+
 ## Links
 
 * https://github.com/larytet-go/accumulator/blob/master/accumulator.go
 * https://css.bz/2016/12/08/go-raw-sockets.html
-* 
+* https://github.com/larytet-go/hashtable
