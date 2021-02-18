@@ -19,7 +19,7 @@ The server needs 40Gb/s connection. The server has to process the incoming packe
 
 Calculating simple average, max, min requires collecting of data in a sliding window. Every sensor can produce up to 600K events/week. The server is going to keep 80M sliding windows 600KB each for the total of 48TB of memory. 
 
-**This is not achievable in 3 hours of coding**
+Time series data base, custom C code: **this is not achievable in 3 hours of coding**
 
 ## Assumptions II
 
