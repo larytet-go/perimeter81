@@ -3,18 +3,27 @@
 # The Goal
 
 A sever processing data from the temperature sensors in the building.
-The server collects max/min/avg
+The server collects daily and weekly max/min/avg
 
 # Assumptions
 
 * Size of a sensor 5 cm<sup>2</sup>
 * 100 floors building, 200 m<sup>2</sup> floor
 * Sensors installed on the ceiling and the floor 
-* Data packet is 64 bytes Ethernet wihout preamble and interframe gap
+* Data packet is 64 bytes Ethernet without preamble and interframe gap
 
-Maimum amount of sensors is 800K/floor or 80M sensors in the building.
+Maximum amount of sensors is 800K/floor or 80M sensors in the building.
 If all sensors report once every second the sever processes 80M packets/s for a budget of 10 micros/packet
 
-The server needs 10Gb/s connection. The server has to process the incoming packets at the line rate 
+The server needs 40Gb/s connection. The server has to process the incoming packets at the line rate 
 
+Calculating simple average, max, min requires collecting of data in a sliding window. Every sensor can produce up to 600K events/week. The server is going to keep 80M sliding windows 600KB each for the total of 48TB of memory. 
+
+This is not achievable in 3 hours of coding. 
+
+# What is acievable
+
+* 1TB of RAM, 600KB per sensor means the hard limit of 1M sensors
+* 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
+* 64 bytes/packer or 64MB/s or 1Gb/s connection
 
