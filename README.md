@@ -5,7 +5,7 @@
 A sever processing data from the temperature sensors in the building.
 The server collects daily and weekly max/min/avg
 
-# Assumptions
+## Assumptions
 
 * Size of a sensor 5 cm<sup>2</sup>
 * 100 floors building, 200 m<sup>2</sup> floor
@@ -21,9 +21,15 @@ Calculating simple average, max, min requires collecting of data in a sliding wi
 
 This is not achievable in 3 hours of coding. 
 
-# What is acievable
+## What is acievable
 
 * 1TB of RAM, 600KB per sensor means the hard limit of 1M sensors
 * 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
 * 64 bytes/packer or 64MB/s or 1Gb/s connection
 
+
+## Links
+
+* https://github.com/larytet-go/accumulator/blob/master/accumulator.go
+* https://css.bz/2016/12/08/go-raw-sockets.html
+* 
