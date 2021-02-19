@@ -60,3 +60,4 @@ curl localhost:8093/sensors
 * https://github.com/larytet-go/hashtable
 * https://gobyexample.com/http-servers
 * https://stackoverflow.com/questions/18427655/use-raw-sockets-in-go
+* https://www.linode.com/docs/guides/developing-udp-and-tcp-clients-and-servers-in-go/
