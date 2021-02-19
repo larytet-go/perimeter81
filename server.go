@@ -122,6 +122,7 @@ func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint32(buffer[:4])
 	// log.Printf("Got data from UDP %v %d", peer, sensorReading)
+	// Shortcur: peer.String() is slow. I can do better producing uint64 composition of (ipv4,port)
 	peerStats, ok := dp.peersStats[peer.String()]
 	if !ok {
 		peerStats = dp.addPeer(peer)
