@@ -118,6 +118,7 @@ func (dp *DataPath) start() error {
 	defer connection.Close()
 	go dp.tick24h(&dp.exitFlag)
 
+	log.Printf("Data path enter loop %s\n", dp.hostname)
 	buffer := make([]byte, 128)
 	for !dp.exitFlag {
 		count, peer, err := connection.ReadFromUDP(buffer)
