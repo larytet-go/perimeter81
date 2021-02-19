@@ -5,7 +5,7 @@
 A sever processing data from the temperature sensors in the building.
 The server collects daily and weekly max/min/avg
 
-## Assumptions "top down"
+## Constrains "top down"
 
 * Size of a sensor 5 cm<sup>2</sup>
 * 100 floors building, 200 m<sup>2</sup> floor
@@ -22,7 +22,7 @@ Calculating simple average, max, min requires collecting of data in a sliding wi
 
 Time series data base, custom C code: **this is not achievable in 3 hours of coding**
 
-## Assumptions "bottom up"
+## Constrains "bottom up"
 
 * 1TB of RAM, 600KB per sensor means the hard limit of 1M sensors
 * Packet loss is not critical
