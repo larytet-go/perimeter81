@@ -24,7 +24,7 @@ func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
 func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%12s %12s %12 %12s", "sensor", "weekly max", "weekly min", "weekly average")
+	fmt.Fprintf(w, "%12s %12s %12 %12s\n", "sensor", "weekly max", "weekly min", "weekly average")
 	for peer, stat := range cp.dataPath.peersStats {
 		result := stat.getResult(true)
 		fmt.Fprintf(w, "%12v %12d %12d %12d\n", peer, result.max, result.min, result.average)
