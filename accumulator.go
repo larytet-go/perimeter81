@@ -14,7 +14,7 @@ type accumulatorCounter struct {
 // This accumulator is fast, but not thread safe. Race when
 // calling Tick() and Add() and between calls to Add() produces not reliable result
 type Accumulator struct {
-	// Shortcut: I need statically allocated arrays
+	// Shortcut: I need statically allocated arrays/memory pool
 	counters []accumulatorCounter
 	cursor   uint64
 	size     uint64
