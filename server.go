@@ -148,13 +148,15 @@ func main() {
 	go cp.start()
 
 	sm := &SensorMock{
-		hostname: hostname,
-		sensors:  2,
-		interval: time.Second,
+		hostname:  hostname,
+		sensors:   2,
+		interval:  time.Second,
+		completed: make(chan struct{}),
 	}
 	go sm.start()
 
 	<-cp.completed
 	dp.exitFlag = true
 	<-dp.completed
+	<-sm.completed
 }

@@ -14,9 +14,11 @@ func celsiusToMilliKelvins(v float64) int {
 }
 
 type SensorMock struct {
-	hostname string
-	sensors  int
-	interval time.Duration
+	hostname  string
+	sensors   int
+	interval  time.Duration
+	completed chan struct{}
+	exitFlag  bool
 }
 
 func (sm *SensorMock) start() error {
@@ -33,7 +35,7 @@ func (sm *SensorMock) start() error {
 	}
 	defer c.Close()
 
-	for {
+	for !sm.exitFlag {
 		time.Sleep(sm.interval)
 		temperature := celsiusToMilliKelvins(float64(rand.Intn(70))) // -273C to +70C
 		for i := 0; i < sm.sensors; i++ {
@@ -43,5 +45,6 @@ func (sm *SensorMock) start() error {
 		}
 	}
 
+	sm.completed <- struct{}{}
 	return nil
 }
