@@ -26,12 +26,12 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 
 	fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
 	for peer, stat := range cp.dataPath.peersStats {
-		result := stat.getResult(true)
+		result := stat.getResult()
 		if !result.nonzero {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), result.max, result.min, result.average)
+		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), result.windowMax, result.windowMin, result.windowAverage)
 	}
 }
 
@@ -40,13 +40,12 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", "sensor", "days", "daily max", "daily min", "daily average")
 	for peer, stat := range cp.dataPath.peersStats {
-		result := stat.getResult(true)
+		result := stat.getResult()
 		if !result.nonzero {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		counters := &stat.counters
-		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), counters.max, counters.min, counters.summ/counters.updates)
+		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), result.max, result.min, result.average)
 	}
 }
 

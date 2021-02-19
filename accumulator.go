@@ -21,11 +21,13 @@ type Accumulator struct {
 }
 
 type Result struct {
-	nonzero bool
-	max     uint64
-	min     uint64
-	results []uint64
-	average uint64
+	nonzero       bool
+	windowMax     uint64
+	windowMin     uint64
+	windowAverage uint64
+	max           []uint64
+	min           []uint64
+	average       []uint64
 }
 
 const DaysInWeek = 7
@@ -69,7 +71,7 @@ func (a *Accumulator) decCursor(cursor uint64) uint64 {
 	}
 }
 
-func (a *Accumulator) getResult(average bool) Result {
+func (a *Accumulator) getResult() Result {
 	var nonzero = false
 	size := a.size
 	var cursor = a.cursor
@@ -77,32 +79,34 @@ func (a *Accumulator) getResult(average bool) Result {
 		size = a.count
 		cursor = a.size
 	}
-	results := make([]uint64, size)
-	max := uint64(0)
-	var min uint64 = math.MaxUint64
+	average := make([]uint64, size)
+	min := make([]uint64, size)
+	max := make([]uint64, size)
+	windowMax := uint64(0)
+	var windowMin uint64 = math.MaxUint64
 	windowSumm := uint64(0)
 	for i := uint64(0); i < size; i++ {
 		cursor = a.incCursor(cursor)
 		updates := a.counters[cursor].updates
 		if updates > 0 {
 			nonzero = true
-			summ := a.counters[cursor].summ
-			var result uint64
-			if average {
-				result = (summ / updates)
-			} else {
-				result = (summ)
+			counter := &a.counters[cursor]
+			summ := counter.summ
+			if windowMax < counter.max {
+				windowMax = counter.max
 			}
-			if max < result {
-				max = result
+			if windowMin > counter.min {
+				windowMin = counter.min
 			}
-			if min > result {
-				min = result
-			}
-			results[i] = result
-			windowSumm += result
+			counterAverage := (summ / updates)
+			average[i] = counterAverage
+			min[i] = counter.min
+			max[i] = counter.max
+			windowSumm += counterAverage
 		} else {
-			results[i] = 0
+			average[i] = 0
+			max[i] = 0
+			min[i] = 0
 		}
 	}
 	windowAverage := uint64(0)
@@ -110,11 +114,12 @@ func (a *Accumulator) getResult(average bool) Result {
 		windowAverage = windowSumm / size
 	}
 	return Result{
-		results: results,
-		nonzero: nonzero,
-		max:     max,
-		min:     min,
-		average: windowAverage,
+		nonzero:   nonzero,
+		max:       max,
+		min:       min,
+		windowMin: windowMin,
+		windowMax: windowMax,
+		average:   windowAverage,
 	}
 }
 
