@@ -95,7 +95,7 @@ type DataPath struct {
 func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
 	accumulator := NewAccumulator()
 	dp.peersStats[peer.String()] = accumulator
-	log.Printf("Add peer %v\n", peer)
+	// log.Printf("Add peer %v\n", peer)
 	return accumulator
 }
 
@@ -178,8 +178,8 @@ func main() {
 
 	sm := &SensorMock{
 		hostname:  hostnameData,
-		sensors:   2,
-		interval:  time.Second,
+		sensors:   40,
+		interval:  10 * time.Millisecond,
 		completed: make(chan struct{}),
 	}
 	go sm.start()

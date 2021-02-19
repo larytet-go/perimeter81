@@ -30,8 +30,7 @@ func (sm *SensorMock) start() error {
 	}
 	connections := []*net.UDPConn{}
 	for i := 0; i < sm.sensors; i++ {
-
-		log.Printf("Mock dial %s\n", sm.hostname)
+		// log.Printf("Mock dial %s\n", sm.hostname)
 		c, err := net.DialUDP("udp4", nil, s)
 		if err != nil {
 			log.Printf("Failed to dial %s %v", sm.hostname, err)
