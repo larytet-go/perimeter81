@@ -60,6 +60,7 @@ type DataPath struct {
 	completed chan struct{}
 	exitFlag  bool
 
+	// Shortcut: GC will kill this code, should use github.com/larytet-go/hashtable instead
 	peersStats map[*net.UDPAddr](*Accumulator)
 }
 
