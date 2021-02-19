@@ -83,7 +83,7 @@ func (p Peer) getID() uint64 {
 	return peerID 
 }
 
-// Rely on the unique IPv4 address
+// Rely on the uniqueness of the IPv4 address in LAN
 func (p Peer) getHash() {
 	return p.getID() && ((uint64(1) << 32) - 1)
 }
