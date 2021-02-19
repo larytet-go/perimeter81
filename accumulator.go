@@ -15,7 +15,6 @@ type accumulatorCounter struct {
 
 // This accumulator is fast, but not thread safe. Race when
 // calling Tick() and Add() and between calls to Add() produces not reliable result
-// Use InitSync(), TickSync() and AddSync() if thread safety is desired
 type Accumulator struct {
 	counters []accumulatorCounter
 	cursor   uint64

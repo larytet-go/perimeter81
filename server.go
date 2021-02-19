@@ -69,7 +69,6 @@ func (dp *DataPath) addPeer(peer *UDPAddr) (*Accumulator) {
 	return accumulator
 }
 
-
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 	peerStats, ok, := dp.peersStats[peer]
 	if !ok {
@@ -78,6 +77,12 @@ func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint64(buffer[:2])
 	peerStats.Add(sensorReading)
+}
+
+
+// 24 hours tick
+func (dp *DataPath) tick() {
+
 }
 
 func (dp *DataPath) start() (error) {
