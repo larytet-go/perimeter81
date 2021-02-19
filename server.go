@@ -118,7 +118,9 @@ func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 	peerStats, ok, _ := dp.peersStats.Load(peerID, hashPeerID(peerID))
 	if !ok {
 		peerStats, _ := addPeer(peer)
-	}	
+	}
+	sensorReading := binary.BigEndian.Uint64(buffer[:2])
+	peerStats.Add(sensorReading)
 }
 
 func (dp *DataPath) start() (error) {
