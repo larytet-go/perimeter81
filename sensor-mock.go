@@ -44,7 +44,10 @@ func (sm *SensorMock) start() error {
 		for i := 0; i < sm.sensors; i++ {
 			data := make([]byte, 4)
 			binary.BigEndian.PutUint32(data, uint32(temperature))
-			c.WriteToUDP(data, s)
+			count, err := c.WriteToUDP(data, s)
+			if err != nil || count != len(data) {
+				log.Printf("Mock send failed %d %v\n", count, err)
+			}
 			temperature += 1 // all sensors are different
 		}
 		// log.Printf("Mock sending data %s %d\n", sm.hostname, temperature)
