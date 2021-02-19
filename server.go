@@ -62,6 +62,9 @@ type DataPath struct {
 
 	// Shortcut: GC will kill this code, should use github.com/larytet-go/hashtable instead
 	peersStats map[*net.UDPAddr](*Accumulator)
+
+	// 24 hours
+	tickInterval time.Duration
 }
 
 func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
@@ -84,7 +87,7 @@ func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 // Shortcut: ignore race condition in the accumulator
 // Shortcut: loop over all accumulator can take time
 func (dp *DataPath) tick24h() {
-	ticker := time.NewTicker(24 * time.Hour)
+	ticker := time.NewTicker(dp.tickInterval)
 	for {
 		<-ticker.C
 		for _, peerStat := range dp.peersStats {
@@ -122,9 +125,10 @@ func main() {
 	hostname := ":8093"
 
 	dp := &DataPath{
-		ipInterface: hostname,
-		completed:   make(chan struct{}),
-		peersStats:  make(map[*net.UDPAddr](*Accumulator)),
+		ipInterface:  hostname,
+		completed:    make(chan struct{}),
+		peersStats:   make(map[*net.UDPAddr](*Accumulator)),
+		tickInterval: 20 * time.Second, // 24 * time.Hour
 	}
 
 	// start data path loop
