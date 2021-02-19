@@ -133,7 +133,7 @@ func (dp *DataPath) tick24h(exitFlag *bool) {
 			peerStat.Tick()
 		}
 	}
-	// Shortcut: It takes time to get to this line, an alternative is select of two channels
+	// Shortcut: It takes time to get to this line, an alternative is `select` and two channels
 	log.Printf("24h ticker exiting\n")
 }
 
