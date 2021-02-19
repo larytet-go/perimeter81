@@ -5,6 +5,10 @@ import (
 	"log"
 	"net/http"
 	"syscall"
+
+	"github.com/larytet-go/hashtable"
+	"github.com/cespare/xxhash"
+	"github.com/larytet-go/unsafepool"
 )
 
 type ControlPanel struct {
@@ -59,6 +63,8 @@ type DataPath struct {
 	maxSensorsCount int
 	completed       chan struct{}
 	exitFlag        bool
+	peersStats     *hashtable.Hashtable
+	peersIDs       *hashtable.Hashtable
 }
 
 func peerID(peer *UDPAddr) uint64 {
@@ -69,7 +75,7 @@ func peerID(peer *UDPAddr) uint64 {
 }
 
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
-	peerID := (peer)
+	peerID := peerId(peer)
 }
 
 func (dp *DataPath) start() (error) {
@@ -97,9 +103,13 @@ func (dp *DataPath) start() (error) {
 }
 
 func main() {
+	maxSensorsCount:= 100 * 1024
+	maxCollisions := 4
 	dp := &DataPath{
-		maxSensorsCount: 100 * 1024,
+		maxSensorsCount: maxSensorsCount,
 		completed:       make(chan struct{}),
+		peersStats: hashtable.New(maxSensorsCount, maxCollisions),
+		peersIDs:     hashtable.New(maxSensorsCount, maxCollisions),
 	}
 
 	// start data path loop
