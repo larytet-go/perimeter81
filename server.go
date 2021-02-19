@@ -81,8 +81,16 @@ func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 
 
 // 24 hours tick
-func (dp *DataPath) tick() {
-
+// Shortcut: ignore race condition in the accumulator
+// Shortcut: loop over all accumulator can take time
+func (dp *DataPath) tick24h() {
+	ticker = time.NewTicker(24 * time.Hour)
+    for {
+		<-ticker.C
+		for _, peerStat := range(dp.peersStats) {
+			peerStat.Tick()
+		}
+	}
 }
 
 func (dp *DataPath) start() (error) {
@@ -95,6 +103,7 @@ func (dp *DataPath) start() (error) {
 		return err
 	}
 	defer connection.Close()
+	go dp.tick24h()
 
 	buffer := make([]byte, 128)
 	for !dp.exitFlag {

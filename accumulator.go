@@ -70,12 +70,6 @@ func (a *Accumulator) decCursor(cursor uint64) uint64 {
 	}
 }
 
-// Return average for the last Tick
-func (a *Accumulator) PeekAverage() uint64 {
-	cursor := a.decCursor(a.cursor)
-	return (a.counters[cursor].summ / a.counters[cursor].updates)
-}
-
 func (a *Accumulator) getResult(average bool) Result {
 	var nonzero = false
 	size := a.size
@@ -134,12 +128,6 @@ func (a *Accumulator) Add(value uint64) {
 	if value < counter.min {
 		counter.min = value
 	}
-}
-
-func (a *Accumulator) AddSync(value uint64) {
-	a.mutex.Lock()
-	defer a.mutex.Unlock()
-	a.Add(value)
 }
 
 func (a *Accumulator) Tick() {
