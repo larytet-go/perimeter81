@@ -28,23 +28,27 @@ func (sm *SensorMock) start() error {
 		log.Printf("Failed to resolve %s %v", sm.hostname, err)
 		return err
 	}
+	connections := []*net.UDPConn{}
+	for i := 0; i < sm.sensors; i++ {
 
-	log.Printf("Mock dial %s\n", sm.hostname)
-	c, err := net.DialUDP("udp4", nil, s)
-	if err != nil {
-		log.Printf("Failed to dial %s %v", sm.hostname, err)
-		return err
+		log.Printf("Mock dial %s\n", sm.hostname)
+		c, err := net.DialUDP("udp4", nil, s)
+		if err != nil {
+			log.Printf("Failed to dial %s %v", sm.hostname, err)
+			return err
+		}
+		connections = append(connections, c)
+		defer c.Close()
 	}
-	defer c.Close()
 
 	log.Printf("Mock sending data %s\n", sm.hostname)
 	for !sm.exitFlag {
 		time.Sleep(sm.interval)
 		temperature := celsiusToMilliKelvins(float64(rand.Intn(70))) // -273C to +70C
-		for i := 0; i < sm.sensors; i++ {
+		for _, connection := range connections {
 			data := make([]byte, 4)
 			binary.BigEndian.PutUint32(data, uint32(temperature))
-			count, err := c.Write(data)
+			count, err := connection.Write(data)
 			if err != nil || count != len(data) {
 				log.Printf("Mock send failed %d %v\n", count, err)
 			}
