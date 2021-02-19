@@ -45,6 +45,12 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 go fmt ./... && go build . && go test -failfast -v .
 ```
 
+## Usage
+
+```
+curl localhost:8093/sensors
+```
+
 ## Links
 
 * https://github.com/larytet-go/accumulator/blob/master/accumulator.go
