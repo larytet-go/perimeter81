@@ -46,13 +46,13 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 ## Build and run
 
-```
+```sh
 go fmt ./... && go build . && MODE_DEMO=true ./perimeter81
 ```
 
 ## Usage tips
 
-```
+```sh
 curl http://localhost:8093
 while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsweekly;sleep 0.2;done;
 while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsdaily;sleep 0.2;done;
