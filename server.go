@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"log"
 	"net"
@@ -56,10 +57,8 @@ func (cp *ControlPanel) start() error {
 type DataPath struct {
 	ipInterface string
 
-	// Size of the hashtables is known at the build time
-	maxSensorsCount int
-	completed       chan struct{}
-	exitFlag        bool
+	completed chan struct{}
+	exitFlag  bool
 
 	peersStats map[*net.UDPAddr](*Accumulator)
 }
@@ -73,7 +72,7 @@ func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
 func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 	peerStats, ok := dp.peersStats[peer]
 	if !ok {
-		peerStats := dp.addPeer(peer)
+		peerStats = dp.addPeer(peer)
 	}
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint64(buffer[:2])
@@ -84,7 +83,7 @@ func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 // Shortcut: ignore race condition in the accumulator
 // Shortcut: loop over all accumulator can take time
 func (dp *DataPath) tick24h() {
-	ticker = time.NewTicker(24 * time.Hour)
+	ticker := time.NewTicker(24 * time.Hour)
 	for {
 		<-ticker.C
 		for _, peerStat := range dp.peersStats {
@@ -109,22 +108,19 @@ func (dp *DataPath) start() error {
 	for !dp.exitFlag {
 		count, peer, err := connection.ReadFromUDP(buffer)
 		if err != nil {
-			log.Errorf("Read from UDP faild %v", err)
+			log.Printf("Read from UDP faild %v", err)
 			break // Was the IP intreface restarted?
 		}
 		dp.processPacket(count, peer, buffer)
 	}
 	dp.completed <- struct{}{}
-	return
+	return nil
 }
 
 func main() {
-	maxSensorsCount := 100 * 1024
-	maxCollisions := 4
 	dp := &DataPath{
-		maxSensorsCount: maxSensorsCount,
-		completed:       make(chan struct{}),
-		peersStats:      make(map[*net.UDPAddr](*Accumulator)),
+		completed:  make(chan struct{}),
+		peersStats: make(map[*net.UDPAddr](*Accumulator)),
 	}
 
 	// start data path loop
