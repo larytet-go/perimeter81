@@ -1,16 +1,14 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
 	"math"
 )
 
 type accumulatorCounter struct {
 	summ    uint64
 	updates uint64
-	max uint64
-	min uint64
+	max     uint64
+	min     uint64
 }
 
 // This accumulator is fast, but not thread safe. Race when
@@ -31,6 +29,7 @@ type Result struct {
 }
 
 const DaysInWeek = 7
+
 func NewAccumulator() *Accumulator {
 	a := &Accumulator{
 		counters: make([]accumulatorCounter, DaysInWeek),
@@ -95,7 +94,7 @@ func (a *Accumulator) getResult(average bool) Result {
 			if average {
 				result = (summ / updates)
 			} else {
-				result = (summ )
+				result = (summ)
 			}
 			if max < result {
 				max = result
@@ -137,4 +136,3 @@ func (a *Accumulator) Tick() {
 	a.counters[cursor].updates = 0
 	a.count++
 }
-

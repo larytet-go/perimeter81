@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
-	"syscall"
+	"time"
 )
 
 type ControlPanel struct {
@@ -60,17 +61,17 @@ type DataPath struct {
 	completed       chan struct{}
 	exitFlag        bool
 
-	peersStats     map[*UDPAddr](*Accumulator)
+	peersStats map[*net.UDPAddr](*Accumulator)
 }
 
-func (dp *DataPath) addPeer(peer *UDPAddr) (*Accumulator) {
+func (dp *DataPath) addPeer(peer *UDPAddr) *Accumulator {
 	accumulator := NewAccumulator()
 	dp.peersStats[peer] = accumulator
 	return accumulator
 }
 
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
-	peerStats, ok, := dp.peersStats[peer]
+	peerStats, ok := dp.peersStats[peer]
 	if !ok {
 		peerStats := addPeer(peer)
 	}
@@ -79,21 +80,20 @@ func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 	peerStats.Add(sensorReading)
 }
 
-
 // 24 hours tick
 // Shortcut: ignore race condition in the accumulator
 // Shortcut: loop over all accumulator can take time
 func (dp *DataPath) tick24h() {
 	ticker = time.NewTicker(24 * time.Hour)
-    for {
+	for {
 		<-ticker.C
-		for _, peerStat := range(dp.peersStats) {
+		for _, peerStat := range dp.peersStats {
 			peerStat.Tick()
 		}
 	}
 }
 
-func (dp *DataPath) start() (error) {
+func (dp *DataPath) start() error {
 	s, err := net.ResolveUDPAddr("udp4", dp.ipInterface)
 	if err != nil {
 		return err
@@ -119,12 +119,12 @@ func (dp *DataPath) start() (error) {
 }
 
 func main() {
-	maxSensorsCount:= 100 * 1024
+	maxSensorsCount := 100 * 1024
 	maxCollisions := 4
 	dp := &DataPath{
 		maxSensorsCount: maxSensorsCount,
 		completed:       make(chan struct{}),
-		peersStats: make(map[*UDPAddr](*Accumulator)),
+		peersStats:      make(map[*UDPAddr](*Accumulator)),
 	}
 
 	// start data path loop
