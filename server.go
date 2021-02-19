@@ -97,18 +97,20 @@ func (p Peer) getHash() uint32 {
 func (dp *DataPath) addPeer(peer *UDPAddr) (accumulator.Accumulator, error) {
 	peerID := peerId(peer)
 	hashPeerID := hashPeerID(peerID)
-
+	var peerStats accumulator.Accumulator
 	peerPtr, ok := dp.peersPool.Alloc()
 	if !ok {
-		return fmt.Errorf("Failed to allocate peer %v", peer)
+		return peerStats, fmt.Errorf("Failed to allocate peer %v", peer)
 	}
 	peerStatsPtr, ok := dp.peersStatPool.Alloc()
 	if !ok {
 		// shortcut: memory leak
-		return fmt.Errorf("Failed to allocate peer stats %v", peer)
+		return peerStats, fmt.Errorf("Failed to allocate peer stats %v", peer)
 	}
-	dp.peersStats.Store(peerID, hashPeerID, peerPtr)
-	dp.peersIDs.Store(peerID, hashPeerID, peerStatsPtr)
+	dp.peersStats.Store(peerID, hashPeerID, peerStatsPtr)
+	dp.peersIDs.Store(peerID, hashPeerID, peerPtr)
+	peerStats = *((*accumulator.Accumulator)(unsafe.Pointer(peerStatsPtr)))
+	return peerStats, nil
 }
 
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
