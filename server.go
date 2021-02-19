@@ -94,10 +94,9 @@ func (p Peer) getHash() uint32 {
 	return uint32(hash)
 }
 
-func (dp *DataPath) addPeer(peer *UDPAddr) (accumulator.Accumulator, error) {
+func (dp *DataPath) addPeer(peer *UDPAddr) (uintptr, error) {
 	peerID := peerId(peer)
 	hashPeerID := hashPeerID(peerID)
-	var peerStats accumulator.Accumulator
 	peerPtr, ok := dp.peersPool.Alloc()
 	if !ok {
 		return peerStats, fmt.Errorf("Failed to allocate peer %v", peer)
@@ -109,17 +108,18 @@ func (dp *DataPath) addPeer(peer *UDPAddr) (accumulator.Accumulator, error) {
 	}
 	dp.peersStats.Store(peerID, hashPeerID, peerStatsPtr)
 	dp.peersIDs.Store(peerID, hashPeerID, peerPtr)
-	peerStats = *((*accumulator.Accumulator)(unsafe.Pointer(peerStatsPtr)))
-	return peerStats, nil
+	return peerStatsPtr, nil
 }
+
 
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 	peerID := peerId(peer)
-	peerStats, ok, _ := dp.peersStats.Load(peerID, hashPeerID(peerID))
+	peerStatsPtr, ok, _ := dp.peersStats.Load(peerID, hashPeerID(peerID))
 	if !ok {
-		peerStats, _ := addPeer(peer)
+		peerStatsPtr, _ := addPeer(peer)
 	}
 	sensorReading := binary.BigEndian.Uint64(buffer[:2])
+	peerStats = (*accumulator.Accumulator)(unsafe.Pointer(peerStatsPtr))
 	peerStats.Add(sensorReading)
 }
 
