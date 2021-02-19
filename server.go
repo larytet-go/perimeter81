@@ -182,7 +182,7 @@ func boolEnv(env string, defaultValue bool) bool {
 
 func main() {
 	hostnameControl := ":8093"
-	hostnameData := ":8094"
+	hostnameData := ":8093"
 
 	modeDemo := boolEnv("MODE_DEMO", false)
 	dp := &DataPath{
