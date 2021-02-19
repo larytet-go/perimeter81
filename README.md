@@ -53,7 +53,8 @@ go fmt ./... && go build . && go test -failfast -v .
 ## Usage
 
 ```
-curl localhost:8093/sensors
+curl http://localhost:8093
+while [ 1 ];do echo -en "\\033[0;0H";curl curl http://localhost:8093/sensors;sleep 0.2;done;
 ```
 
 ## Links
