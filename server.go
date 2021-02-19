@@ -18,6 +18,7 @@ type ControlPanel struct {
 	dataPath  *DataPath
 }
 
+// sorted array of peers
 func getPeers(peersStats map[string](*Accumulator)) []string {
 	peers := make([]string, 0, len(peersStats))
 	for peer, _ := range peersStats {
