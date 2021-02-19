@@ -29,7 +29,7 @@ func getPeers(peersStats map[string](*Accumulator)) []string {
 func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%20v %20v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
+	fmt.Fprintf(w, "%20v %5v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
 	for _, peer := range getPeers(cp.dataPath.peersStats) {
 		stat := cp.dataPath.peersStats[peer]
 		result := stat.getResult()
@@ -37,14 +37,14 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.average), result.windowMax, result.windowMin, result.windowAverage)
+		fmt.Fprintf(w, "%20v %5v %20v %20v %20v\n", peer, len(result.average), result.windowMax, result.windowMin, result.windowAverage)
 	}
 }
 
 func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%20v %20v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "daily max", "daily min", "daily average")
+	fmt.Fprintf(w, "%20v %5v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "daily max", "daily min", "daily average")
 	for _, peer := range getPeers(cp.dataPath.peersStats) {
 		stat := cp.dataPath.peersStats[peer]
 		result := stat.getResult()
@@ -52,7 +52,7 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %20v %v %v %v\n", peer, len(result.average), result.max, result.min, result.average)
+		fmt.Fprintf(w, "%20v %5v %v %v %v\n", peer, len(result.average), result.max, result.min, result.average)
 	}
 }
 
