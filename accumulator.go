@@ -22,13 +22,15 @@ type Accumulator struct {
 }
 
 type Result struct {
-	nonzero       bool
+	nonzero bool
+
 	windowMax     uint64
 	windowMin     uint64
 	windowAverage uint64
-	max           []uint64
-	min           []uint64
-	average       []uint64
+
+	max     []uint64
+	min     []uint64
+	average []uint64
 }
 
 func NewAccumulator(size uint64) *Accumulator {
