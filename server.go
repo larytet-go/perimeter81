@@ -64,13 +64,13 @@ type DataPath struct {
 	peersStats map[*net.UDPAddr](*Accumulator)
 }
 
-func (dp *DataPath) addPeer(peer *UDPAddr) *Accumulator {
+func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
 	accumulator := NewAccumulator()
 	dp.peersStats[peer] = accumulator
 	return accumulator
 }
 
-func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
+func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 	peerStats, ok := dp.peersStats[peer]
 	if !ok {
 		peerStats := addPeer(peer)
@@ -124,7 +124,7 @@ func main() {
 	dp := &DataPath{
 		maxSensorsCount: maxSensorsCount,
 		completed:       make(chan struct{}),
-		peersStats:      make(map[*UDPAddr](*Accumulator)),
+		peersStats:      make(map[*net.UDPAddr](*Accumulator)),
 	}
 
 	// start data path loop

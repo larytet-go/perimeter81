@@ -21,11 +21,11 @@ type Accumulator struct {
 }
 
 type Result struct {
-	Nonzero   bool
-	MaxWindow uint64
-	Max       uint64
-	Min       uint64
-	Results   []uint64
+	nonzero   bool
+	maxWindow uint64
+	max       uint64
+	min       uint64
+	results   []uint64
 }
 
 const DaysInWeek = 7
@@ -33,7 +33,7 @@ const DaysInWeek = 7
 func NewAccumulator() *Accumulator {
 	a := &Accumulator{
 		counters: make([]accumulatorCounter, DaysInWeek),
-		size:     size,
+		size:     DaysInWeek,
 		count:    0,
 	}
 	a.Reset()
@@ -45,11 +45,11 @@ func (a *Accumulator) Reset() {
 	a.count = 0
 	// Probably faster for lager arrays than call to make()
 	for i := uint64(0); i < a.size; i++ {
-		counter = &a.counters[i]
+		counter := &a.counters[i]
 		counter.summ = 0
 		counter.updates = 0
-		counter.Max = uint64(0)
-		counter.Min = uint64(math.MaxUint64)
+		counter.max = uint64(0)
+		counter.min = uint64(math.MaxUint64)
 	}
 }
 
@@ -108,17 +108,17 @@ func (a *Accumulator) getResult(average bool) Result {
 		}
 	}
 	return Result{
-		Results:   results,
-		Nonzero:   nonzero,
-		Max:       max,
-		Min:       min,
-		MaxWindow: maxWindow,
+		results:   results,
+		nonzero:   nonzero,
+		max:       max,
+		min:       min,
+		maxWindow: maxWindow,
 	}
 }
 
 func (a *Accumulator) Add(value uint64) {
 	cursor := a.cursor
-	counter = &a.counters[i]
+	counter := &a.counters[cursor]
 	counter.summ += value
 	counter.updates++
 	if value > counter.max {
