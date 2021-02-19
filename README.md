@@ -18,13 +18,13 @@ If all sensors report once every second the sever processes 80M packets/s for a 
 
 The server needs 40Gb/s connection. The server has to process the incoming packets at the line rate 
 
-Calculating simple average, max, min requires collecting of data in a sliding window. Every sensor can produce up to 600K events/week. The server is going to keep 80M sliding windows 600KB each for the total of 48TB of memory. 
+Calculating simple average, max, min requires collecting of data in a sliding window. Every sensor can produce up to 600K events/week. The server is going to keep 80M sliding windows (7 days X 32 bytes) each for the total of 15GB of memory. 
 
 Time series data base, custom C code: **this is not achievable in 3 hours of coding**
 
 ## Constraints "bottom up"
 
-* 1TB of RAM, 600KB per sensor means the hard limit of 1M sensors
+* 300MB of RAM, 600KB per sensor means the hard limit of 1M sensors
 * Packet loss is not critical
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
 * 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
@@ -44,6 +44,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * Sensor mock reporting temperature in **milliKelvins** (from 0 to infinity)
 * Shortcut: use slower Golang map instead of zero memory allocation hashtable
 * Shortcut: ignore race condition between the HTTP server and the DataPath when accessing the accumulators
+
 
 ## Build and run
 
