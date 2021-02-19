@@ -50,18 +50,37 @@ func (cp *ControlPanel) start() {
 	http.ListenAndServe(cp.ipInterface, nil)
 }
 
-func dataPath() {
+type DataPath struct {
+	// Size of the hashtables is known at the build time
+	maxSensorsCount int
+	completed       chan struct{}
+	exitFlag        bool
+}
 
+func (dp *DataPath) start() {
+	for !dp.exitFlag {
+
+	}
+	dp.completed <- struct{}{}
 }
 
 func main() {
+	dp := &DataPath{
+		maxSensorsCount: 100 * 1024,
+		completed:       make(chan struct{}),
+	}
+
 	// start data path loop
-	go dataPath()
+	go dp.start()
+
 	// start control loop
 	cp := &ControlPanel{
 		ipInterface: ":8093",
 		completed:   make(chan struct{}),
 	}
 	go cp.start()
+
 	<-cp.completed
+	dp.exitFlag = true
+	<-dp.completed
 }
