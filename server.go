@@ -194,13 +194,7 @@ func main() {
 	}
 	if modeDemo {
 		log.Println("Demo mode")
-		dp = &DataPath{
-			hostname:     hostnameData,
-			completed:    make(chan struct{}),
-			peersStats:   make(map[string](*Accumulator)),
-			tickInterval: 2 * time.Second,
-			days:         7,
-		}
+		dp.tickInterval = 2 * time.Second
 	}
 
 	// start data path loop
