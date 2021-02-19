@@ -54,7 +54,7 @@ go fmt ./... && go build .
 
 ```
 curl http://localhost:8093
-while [ 1 ];do echo -en "\\033[0;0H";curl curl http://localhost:8093/sensors;sleep 0.2;done;
+while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsweekly;sleep 0.2;done;
 ```
 
 ## Links
