@@ -39,6 +39,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * Lockfree hashtable "Peer IP to sensor stats"
 * 600K lock free accumulators
 * A single thread processing sensors reports
+* A 24h ticker shifting the sliding window every day
 * An HTTP server serving reports
 * Sensor mock reporting temperature in **Kelvins**
 * Shortcut - use slower Golang map instead of zero memory allocation hashtable
