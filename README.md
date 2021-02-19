@@ -44,15 +44,16 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * Sensor mock reporting temperature in **Kelvins**
 * Shortcut - use slower Golang map instead of zero memory allocation hashtable
 
-## Build
+## Build and run
 
 ```
-go fmt ./... && go build . 
+go fmt ./... && go build . && ./perimeter81
 ```
 
-## Usage
+## Usage tips
 
 ```
+./
 curl http://localhost:8093
 while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsweekly;sleep 0.2;done;
 ```
