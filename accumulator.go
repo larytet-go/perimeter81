@@ -119,7 +119,8 @@ func (a *Accumulator) getResult() Result {
 		min:       min,
 		windowMin: windowMin,
 		windowMax: windowMax,
-		average:   windowAverage,
+		windowAverage:   windowAverage,
+		average: average,
 	}
 }
 
