@@ -9,7 +9,6 @@ import (
 	"github.com/larytet-go/hashtable"
 	"github.com/cespare/xxhash"
 	"github.com/larytet-go/unsafepool"
-	"github.com/larytet-go/accumulator"
 )
 
 type ControlPanel struct {
@@ -118,6 +117,7 @@ func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 	if !ok {
 		peerStatsPtr, _ := addPeer(peer)
 	}
+	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint64(buffer[:2])
 	peerStats = (*accumulator.Accumulator)(unsafe.Pointer(peerStatsPtr))
 	peerStats.Add(sensorReading)
