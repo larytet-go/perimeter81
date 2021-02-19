@@ -24,10 +24,14 @@ func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
 func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%20v %20v %20v %20v\n", "sensor", "weekly max", "weekly min", "weekly average")
+	fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
 	for peer, stat := range cp.dataPath.peersStats {
 		result := stat.getResult(true)
-		fmt.Fprintf(w, "%20v %20v %20v %20v\n", peer, result.max, result.min, result.average)
+		if !result.nonzero {
+			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
+			continue
+		}
+		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), result.max, result.min, result.average)
 	}
 }
 
@@ -148,7 +152,7 @@ func main() {
 		hostname:     hostnameData,
 		completed:    make(chan struct{}),
 		peersStats:   make(map[string](*Accumulator)),
-		tickInterval: 20 * time.Second, // 24 * time.Hour
+		tickInterval: 2 * time.Second, // 24 * time.Hour
 	}
 
 	// start data path loop
