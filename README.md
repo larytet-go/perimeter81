@@ -24,7 +24,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 ## Constraints "bottom up"
 
-* 300MB of RAM, 256B per sensor means the hard limit of 1M sensors
+* 0.5GB of RAM, 256B per sensor means the hard limit of 1M sensors
 * Packet loss is not critical
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
 * 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
