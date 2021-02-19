@@ -156,7 +156,8 @@ func main() {
 	go sm.start()
 
 	<-cp.completed
-	dp.exitFlag = true
+
+	dp.exitFlag, sm.exitFlag = true, true
 	<-dp.completed
 	<-sm.completed
 }
