@@ -12,6 +12,7 @@ import (
 type ControlPanel struct {
 	ipInterface string
 	completed   chan struct{}
+	dataPath    *DataPath
 }
 
 func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
@@ -21,8 +22,12 @@ func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
 
 // shortcut: for 1M sensors I need a better UI
 func (cp *ControlPanel) sensors(w http.ResponseWriter, req *http.Request) {
-	w.Header().Add("Content-Type", "applicaton/json")
-	fmt.Fprintf(w, "sensors")
+	w.Header().Add("Content-Type", "text/plain")
+
+	for peer, stat := range cp.dataPath.peersStats {
+		result := stat.getResult(true)
+		fmt.Fprintf(w, "%v daily averages %v, max %d, min %d\n", peer, result.results, result.max, result.min)
+	}
 }
 
 func writeLink(w http.ResponseWriter, ref string) {
@@ -138,6 +143,7 @@ func main() {
 	cp := &ControlPanel{
 		ipInterface: hostname,
 		completed:   make(chan struct{}),
+		dataPath:    dp,
 	}
 	go cp.start()
 
