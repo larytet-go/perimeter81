@@ -34,6 +34,7 @@ const DaysInWeek = 7
 
 func NewAccumulator() *Accumulator {
 	a := &Accumulator{
+		// Shortcut: I need statically allocated arrays
 		counters: make([]accumulatorCounter, DaysInWeek),
 		size:     DaysInWeek,
 		count:    0,

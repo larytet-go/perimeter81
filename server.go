@@ -85,7 +85,7 @@ type DataPath struct {
 	completed chan struct{}
 	exitFlag  bool
 
-	// Shortcut: GC will kill this code, should use github.com/larytet-go/hashtable instead
+	// Shortcut: GC will kill this code, should use zero allocation map
 	peersStats map[string](*Accumulator)
 
 	// 24 hours
