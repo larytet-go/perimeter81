@@ -32,14 +32,20 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 	w.Header().Add("Content-Type", "text/plain")
 
 	fmt.Fprintf(w, "%20v %5v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
-	for _, peer := range getPeers(cp.dataPath.peersStats) {
+	weeklyAverage := uint64(0)
+	peers := getPeers(cp.dataPath.peersStats)
+	for _, peer := range peers {
 		stat := cp.dataPath.peersStats[peer]
 		result := stat.getResult()
 		if !result.nonzero {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
+		weeklyAverage += result.windowAverage
 		fmt.Fprintf(w, "%20v %5v %20v %20v %20v\n", peer, len(result.average), result.windowMax, result.windowMin, result.windowAverage)
+	}
+	if len(peers) > 0 {
+		fmt.Fprintf(w, "weekly average %v\n", weeklyAverage/uint64(len(peers)))
 	}
 }
 
