@@ -9,6 +9,7 @@ import (
 	"github.com/larytet-go/hashtable"
 	"github.com/cespare/xxhash"
 	"github.com/larytet-go/unsafepool"
+	"github.com/larytet-go/accumulator"
 )
 
 type ControlPanel struct {
@@ -63,8 +64,12 @@ type DataPath struct {
 	maxSensorsCount int
 	completed       chan struct{}
 	exitFlag        bool
+
 	peersStats     *hashtable.Hashtable
 	peersIDs       *hashtable.Hashtable
+
+	peersStatPool *unsafepool.Pool
+	peersPool *unsafepool.Pool
 }
 
 type Peer struct {
@@ -89,11 +94,21 @@ func (p Peer) getHash() uint32 {
 	return uint32(hash)
 }
 
-func (dp *DataPath) addPeer(peer *UDPAddr) {
+func (dp *DataPath) addPeer(peer *UDPAddr) (accumulator.Accumulator, error) {
 	peerID := peerId(peer)
 	hashPeerID := hashPeerID(peerID)
-	dp.peersStats.Store(peerID, hashPeerID, )
-	dp.peersIDs.Store(peerID, hashPeerID, )
+
+	peerPtr, ok := dp.peersPool.Alloc()
+	if !ok {
+		return fmt.Errorf("Failed to allocate peer %v", peer)
+	}
+	peerStatsPtr, ok := dp.peersStatPool.Alloc()
+	if !ok {
+		// shortcut: memory leak
+		return fmt.Errorf("Failed to allocate peer stats %v", peer)
+	}
+	dp.peersStats.Store(peerID, hashPeerID, peerPtr)
+	dp.peersIDs.Store(peerID, hashPeerID, peerStatsPtr)
 }
 
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
@@ -136,6 +151,8 @@ func main() {
 		completed:       make(chan struct{}),
 		peersStats: hashtable.New(maxSensorsCount, maxCollisions),
 		peersIDs:     hashtable.New(maxSensorsCount, maxCollisions),
+		peersPool : unsafepool.New(reflect.TypeOf(new(Peer)), maxSensorsCount),
+		peersStatPool : unsafepool.New(reflect.TypeOf(new(accumulator.Accumulator)), maxSensorsCount),
 	}
 
 	// start data path loop
