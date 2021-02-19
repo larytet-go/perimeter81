@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
-    "net/http"
+	"net/http"
 )
 
-
 type ControlPanel struct {
-	port int
-	completed chan struct{}
+	ipInterface string
+	completed   chan struct{}
 }
 
 func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
@@ -23,33 +22,31 @@ func (cp *ControlPanel) sensors(w http.ResponseWriter, req *http.Request) {
 
 func (cp *ControlPanel) exit(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Exiting")
+	log.Printf("Exiting")
 	cp.completed <- struct{}{}
 }
 
 func (cp *ControlPanel) start() {
-	http.HandleFunc("/totals", cp.totals)	
-	http.HandleFunc("/sensors", cp.totals)	
-	http.HandleFunc("/exit", cp.exit)	
-	
-	http.ListenAndServe(cp.port, nil)
+	log.Printf("Starting sever %s", cp.ipInterface)
+	http.HandleFunc("/totals", cp.totals)
+	http.HandleFunc("/sensors", cp.totals)
+	http.HandleFunc("/exit", cp.exit)
+
+	http.ListenAndServe(cp.ipInterface, nil)
 }
-
-
 
 func dataPath() {
 
 }
 
-
-
 func main() {
-	// start data path loop 
+	// start data path loop
 	go dataPath()
 	// start control loop
-	cp = &ControlPanel{
-		port: 8093,
-		completed: make(chan struct{}),
+	cp := &ControlPanel{
+		ipInterface: ":8093",
+		completed:   make(chan struct{}),
 	}
 	go cp.start()
-	< cp.completed
+	<-cp.completed
 }
