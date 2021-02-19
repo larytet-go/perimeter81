@@ -24,10 +24,10 @@ func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
 func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%12v %12v %12v %12v\n", "sensor", "weekly max", "weekly min", "weekly average")
+	fmt.Fprintf(w, "%20v %20v %20v %20v\n", "sensor", "weekly max", "weekly min", "weekly average")
 	for peer, stat := range cp.dataPath.peersStats {
 		result := stat.getResult(true)
-		fmt.Fprintf(w, "%12v %12v %12v %12v\n", peer, result.max, result.min, result.average)
+		fmt.Fprintf(w, "%20v %20v %20v %20v\n", peer, result.max, result.min, result.average)
 	}
 }
 
