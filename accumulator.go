@@ -114,13 +114,13 @@ func (a *Accumulator) getResult() Result {
 		windowAverage = windowSumm / size
 	}
 	return Result{
-		nonzero:   nonzero,
-		max:       max,
-		min:       min,
-		windowMin: windowMin,
-		windowMax: windowMax,
-		windowAverage:   windowAverage,
-		average: average,
+		nonzero:       nonzero,
+		max:           max,
+		min:           min,
+		windowMin:     windowMin,
+		windowMax:     windowMax,
+		windowAverage: windowAverage,
+		average:       average,
 	}
 }
 

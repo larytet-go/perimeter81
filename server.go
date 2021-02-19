@@ -31,7 +31,7 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), result.windowMax, result.windowMin, result.windowAverage)
+		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.average), result.windowMax, result.windowMin, result.windowAverage)
 	}
 }
 
@@ -45,7 +45,7 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), result.max, result.min, result.average)
+		fmt.Fprintf(w, "%20v %20v %v %v %v\n", peer, len(result.average), result.max, result.min, result.average)
 	}
 }
 
