@@ -27,7 +27,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * 0.5GB of RAM, 256B per sensor means the hard limit of 1M sensors
 * Packet loss is not critical
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
-* 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
+* 1M packets/s for the time budget 1ms/packet. **Ehernet/UDP will do**
 * Shortcut: Golang GC will kill the server keeping 1M entries, but I am doing it anyway. Zero allocation does not fit 3 hours developmemt deadline.
 
 300 lines in Go? **isn't it too trivial?**
