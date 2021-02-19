@@ -51,7 +51,7 @@ func (cp *ControlPanel) exit(w http.ResponseWriter, req *http.Request) {
 func (cp *ControlPanel) start() error {
 	log.Printf("Starting sever %s", cp.hostname)
 	http.HandleFunc("/totals", cp.totals)
-	http.HandleFunc("/sensors", cp.totals)
+	http.HandleFunc("/sensors", cp.sensors)
 	http.HandleFunc("/exit", cp.exit)
 	http.HandleFunc("/", cp.help)
 
