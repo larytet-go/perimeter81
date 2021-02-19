@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/binary"
 	"log"
 	"math"
 	"math/rand"
 	"net"
-	"strconv"
 	"time"
 )
 
@@ -37,14 +37,17 @@ func (sm *SensorMock) start() error {
 	}
 	defer c.Close()
 
+	log.Printf("Mock sending data %s\n", sm.hostname)
 	for !sm.exitFlag {
 		time.Sleep(sm.interval)
 		temperature := celsiusToMilliKelvins(float64(rand.Intn(70))) // -273C to +70C
 		for i := 0; i < sm.sensors; i++ {
-			data := []byte(strconv.Itoa(temperature))
+			data := make([]byte, 4)
+			binary.BigEndian.PutUint32(data, uint32(temperature))
 			c.WriteToUDP(data, s)
 			temperature += 1 // all sensors are different
 		}
+		// log.Printf("Mock sending data %s %d\n", sm.hostname, temperature)
 	}
 
 	log.Printf("Mock exiting\n")

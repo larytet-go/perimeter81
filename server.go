@@ -79,13 +79,14 @@ func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
 }
 
 func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
+	// Kelvin from zero to infinity
+	sensorReading := binary.BigEndian.Uint32(buffer[:4])
+	log.Printf("Got data from UDP %v %d", peer, sensorReading)
 	peerStats, ok := dp.peersStats[peer]
 	if !ok {
 		peerStats = dp.addPeer(peer)
 	}
-	// Kelvin from zero to infinity
-	sensorReading := binary.BigEndian.Uint64(buffer[:2])
-	peerStats.Add(sensorReading)
+	peerStats.Add(uint64(sensorReading))
 }
 
 // 24 hours tick
@@ -132,10 +133,11 @@ func (dp *DataPath) start() error {
 }
 
 func main() {
-	hostname := ":8093"
+	hostnameControl := ":8093"
+	hostnameData := ":8094"
 
 	dp := &DataPath{
-		hostname:     hostname,
+		hostname:     hostnameData,
 		completed:    make(chan struct{}),
 		peersStats:   make(map[*net.UDPAddr](*Accumulator)),
 		tickInterval: 20 * time.Second, // 24 * time.Hour
@@ -146,14 +148,14 @@ func main() {
 
 	// start control loop
 	cp := &ControlPanel{
-		hostname:  hostname,
+		hostname:  hostnameControl,
 		completed: make(chan struct{}),
 		dataPath:  dp,
 	}
 	go cp.start()
 
 	sm := &SensorMock{
-		hostname:  hostname,
+		hostname:  hostnameData,
 		sensors:   2,
 		interval:  time.Second,
 		completed: make(chan struct{}),
