@@ -11,7 +11,7 @@ type accumulatorCounter struct {
 	min     uint64
 }
 
-// I keep a dedicated accumulator for every sensor or ~265 bytes/sensor
+// I keep a dedicated accumulator for every sensor or ~250 bytes/sensor
 // This accumulator is fast, but not thread safe. Race when
 // calling Tick() and Add() and in between calls to Add() produces not reliable result
 type Accumulator struct {
