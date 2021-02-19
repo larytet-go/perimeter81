@@ -43,15 +43,14 @@ func (sm *SensorMock) start() error {
 	log.Printf("Mock sending data %s\n", sm.hostname)
 	for !sm.exitFlag {
 		time.Sleep(sm.interval)
-		temperature := celsiusToMilliKelvins(float64(rand.Intn(70))) // -273C to +70C
 		for _, connection := range connections {
+			temperature := celsiusToMilliKelvins(float64(rand.Intn(70))) // -273C to +70C
 			data := make([]byte, 4)
 			binary.BigEndian.PutUint32(data, uint32(temperature))
 			count, err := connection.Write(data)
 			if err != nil || count != len(data) {
 				log.Printf("Mock send failed %d %v\n", count, err)
 			}
-			temperature += 1 // all sensors are different
 		}
 		// log.Printf("Mock sending data %s %d\n", sm.hostname, temperature)
 	}
