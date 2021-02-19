@@ -162,7 +162,7 @@ func main() {
 		hostname:     hostnameData,
 		completed:    make(chan struct{}),
 		peersStats:   make(map[string](*Accumulator)),
-		tickInterval: 2 * time.Second, // 24 * time.Hour
+		tickInterval: 2 * time.Second, // Use time.Day (24 hours) in the real system
 	}
 
 	// start data path loop
