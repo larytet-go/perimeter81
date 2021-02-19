@@ -67,15 +67,40 @@ type DataPath struct {
 	peersIDs       *hashtable.Hashtable
 }
 
-func peerID(peer *UDPAddr) uint64 {
+type Peer struct {
 	// Assumke LAN: IPv4
+	ipv4 uint32
+	port int
+}
+
+func NewPeer(peer *UDPAddr) Peer {
 	ipv4 := binary.BigEndian.Uint64(peer.IP[:4])
-	peerID := uint64(peer.Port) + (ipv4 << 16)
+	return Peer{ipv4, peer.Port}
+}
+
+func (p Peer) getID() uint64 {
+	peerID := uint64(p.port << 32) + (p.ipv4 << 0)
 	return peerID 
+}
+
+// Rely on the unique IPv4 address
+func (p Peer) getHash() {
+	return p.getID() && ((uint64(1) << 32) - 1)
+}
+
+func (dp *DataPath) addPeer(peer *UDPAddr) {
+	peerID := peerId(peer)
+	hashPeerID := hashPeerID(peerID)
+	dp.peersStats.Store(peerID, hashPeerID, )
+	dp.peersIDs.Store(peerID, hashPeerID, )
 }
 
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
 	peerID := peerId(peer)
+	peerStats, ok, _ := dp.peersStats.Load(peerID, hashPeerID(peerID))
+	if !ok {
+		peerStats, _ := addPeer(peer)
+	}	
 }
 
 func (dp *DataPath) start() (error) {
