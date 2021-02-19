@@ -81,7 +81,7 @@ func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
 func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint32(buffer[:4])
-	log.Printf("Got data from UDP %v %d", peer, sensorReading)
+	// log.Printf("Got data from UDP %v %d", peer, sensorReading)
 	peerStats, ok := dp.peersStats[peer]
 	if !ok {
 		peerStats = dp.addPeer(peer)
