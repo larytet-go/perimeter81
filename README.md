@@ -43,7 +43,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * An HTTP server serving reports
 * Sensor mock reporting temperature in **milliKelvins** (from 0 to infinity)
 * Shortcut: use slower Golang map instead of zero memory allocation hashtable
-* Shortcut: ignore race condition between the HTTP server and the DataPath when accesses the accumulators
+* Shortcut: ignore race condition between the HTTP server and the DataPath when accessing the accumulators
 
 ## Build and run
 
