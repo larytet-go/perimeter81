@@ -66,3 +66,4 @@ while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsdaily;sle
 * https://gobyexample.com/http-servers
 * https://stackoverflow.com/questions/18427655/use-raw-sockets-in-go
 * https://www.linode.com/docs/guides/developing-udp-and-tcp-clients-and-servers-in-go/
+* https://github.com/larytet-go/unsafepool
