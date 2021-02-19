@@ -66,7 +66,7 @@ type DataPath struct {
 	exitFlag  bool
 
 	// Shortcut: GC will kill this code, should use github.com/larytet-go/hashtable instead
-	peersStats map[*net.UDPAddr](*Accumulator)
+	peersStats map[string](*Accumulator)
 
 	// 24 hours
 	tickInterval time.Duration
@@ -74,7 +74,8 @@ type DataPath struct {
 
 func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
 	accumulator := NewAccumulator()
-	dp.peersStats[peer] = accumulator
+	dp.peersStats[peer.String()] = accumulator
+	log.Printf("Add peer %v\n", peer)
 	return accumulator
 }
 
@@ -82,7 +83,7 @@ func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint32(buffer[:4])
 	// log.Printf("Got data from UDP %v %d", peer, sensorReading)
-	peerStats, ok := dp.peersStats[peer]
+	peerStats, ok := dp.peersStats[peer.String()]
 	if !ok {
 		peerStats = dp.addPeer(peer)
 	}
@@ -140,7 +141,7 @@ func main() {
 	dp := &DataPath{
 		hostname:     hostnameData,
 		completed:    make(chan struct{}),
-		peersStats:   make(map[*net.UDPAddr](*Accumulator)),
+		peersStats:   make(map[string](*Accumulator)),
 		tickInterval: 20 * time.Second, // 24 * time.Hour
 	}
 
