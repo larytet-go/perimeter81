@@ -40,6 +40,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * 600K lock free accumulators
 * A single thread processing sensors reports
 * An HTTP server serving reports
+* Sensor mock reporting temperature in **Kelvins**
 
 ## Build
 

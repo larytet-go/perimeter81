@@ -5,10 +5,6 @@ import (
 	"log"
 	"net/http"
 	"syscall"
-
-	"github.com/larytet-go/hashtable"
-	"github.com/cespare/xxhash"
-	"github.com/larytet-go/unsafepool"
 )
 
 type ControlPanel struct {
@@ -64,62 +60,23 @@ type DataPath struct {
 	completed       chan struct{}
 	exitFlag        bool
 
-	peersStats     *hashtable.Hashtable
-	peersIDs       *hashtable.Hashtable
-
-	peersStatPool *unsafepool.Pool
-	peersPool *unsafepool.Pool
+	peersStats     map[*UDPAddr](*Accumulator)
 }
 
-type Peer struct {
-	// Assumke LAN: IPv4
-	ipv4 uint32
-	port int
-}
-
-func NewPeer(peer *UDPAddr) Peer {
-	ipv4 := binary.BigEndian.Uint64(peer.IP[:4])
-	return Peer{ipv4, peer.Port}
-}
-
-func (p Peer) getID() uint64 {
-	peerID := uint64(p.port << 32) + (p.ipv4 << 0)
-	return peerID 
-}
-
-// Rely on the uniqueness of the IPv4 address in LAN
-func (p Peer) getHash() uint32 {
-	hash :=  p.getID() && ((uint64(1) << 32) - 1)
-	return uint32(hash)
-}
-
-func (dp *DataPath) addPeer(peer *UDPAddr) (uintptr, error) {
-	peerID := peerId(peer)
-	hashPeerID := hashPeerID(peerID)
-	peerPtr, ok := dp.peersPool.Alloc()
-	if !ok {
-		return peerStats, fmt.Errorf("Failed to allocate peer %v", peer)
-	}
-	peerStatsPtr, ok := dp.peersStatPool.Alloc()
-	if !ok {
-		// shortcut: memory leak
-		return peerStats, fmt.Errorf("Failed to allocate peer stats %v", peer)
-	}
-	dp.peersStats.Store(peerID, hashPeerID, peerStatsPtr)
-	dp.peersIDs.Store(peerID, hashPeerID, peerPtr)
-	return peerStatsPtr, nil
+func (dp *DataPath) addPeer(peer *UDPAddr) (*Accumulator) {
+	accumulator := NewAccumulator()
+	dp.peersStats[peer] = accumulator
+	return accumulator
 }
 
 
 func (dp *DataPath) processPacket(count int, peer *UDPAddr, buffer []byte) {
-	peerID := peerId(peer)
-	peerStatsPtr, ok, _ := dp.peersStats.Load(peerID, hashPeerID(peerID))
+	peerStats, ok, := dp.peersStats[peer]
 	if !ok {
-		peerStatsPtr, _ := addPeer(peer)
+		peerStats := addPeer(peer)
 	}
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint64(buffer[:2])
-	peerStats = (*accumulator.Accumulator)(unsafe.Pointer(peerStatsPtr))
 	peerStats.Add(sensorReading)
 }
 
@@ -153,10 +110,7 @@ func main() {
 	dp := &DataPath{
 		maxSensorsCount: maxSensorsCount,
 		completed:       make(chan struct{}),
-		peersStats: hashtable.New(maxSensorsCount, maxCollisions),
-		peersIDs:     hashtable.New(maxSensorsCount, maxCollisions),
-		peersPool : unsafepool.New(reflect.TypeOf(new(Peer)), maxSensorsCount),
-		peersStatPool : unsafepool.New(reflect.TypeOf(new(accumulator.Accumulator)), maxSensorsCount),
+		peersStats: make(map[*UDPAddr](*Accumulator)),
 	}
 
 	// start data path loop
