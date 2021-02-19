@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"sort"
 	"time"
 )
 
@@ -15,17 +16,22 @@ type ControlPanel struct {
 	dataPath  *DataPath
 }
 
-func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
-	w.Header().Add("Content-Type", "applicaton/json")
-	fmt.Fprintf(w, "Totals")
+func getPeers(peersStats map[string](*Accumulator)) []string {
+	peers := make([]string, 0, len(peersStats))
+	for peer, _ := range peersStats {
+		peers = append(peers, peer)
+	}
+	sort.Strings(peers)
+	return peers
 }
 
 // shortcut: for 1M sensors I need a better UI
 func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
-	for peer, stat := range cp.dataPath.peersStats {
+	fmt.Fprintf(w, "%20v %20v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
+	for _, peer := range getPeers(cp.dataPath.peersStats) {
+		stat := cp.dataPath.peersStats[peer]
 		result := stat.getResult()
 		if !result.nonzero {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
@@ -38,8 +44,9 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", "sensor", "days", "daily max", "daily min", "daily average")
-	for peer, stat := range cp.dataPath.peersStats {
+	fmt.Fprintf(w, "%20v %20v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "daily max", "daily min", "daily average")
+	for _, peer := range getPeers(cp.dataPath.peersStats) {
+		stat := cp.dataPath.peersStats[peer]
 		result := stat.getResult()
 		if !result.nonzero {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
@@ -55,7 +62,7 @@ func writeLink(w http.ResponseWriter, ref string) {
 
 func (cp *ControlPanel) help(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
-	links := []string{"sensorsweekly", "sensorsdaily", "totals", "exit"}
+	links := []string{"sensorsweekly", "sensorsdaily", "exit"}
 	for _, link := range links {
 		writeLink(w, link)
 	}
@@ -69,7 +76,6 @@ func (cp *ControlPanel) exit(w http.ResponseWriter, req *http.Request) {
 
 func (cp *ControlPanel) start() error {
 	log.Printf("Starting sever %s", cp.hostname)
-	http.HandleFunc("/totals", cp.totals)
 	http.HandleFunc("/sensorsweekly", cp.sensorsWeekly)
 	http.HandleFunc("/sensorsdaily", cp.sensorsDaily)
 	http.HandleFunc("/exit", cp.exit)
