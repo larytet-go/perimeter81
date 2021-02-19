@@ -21,12 +21,23 @@ func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
 }
 
 // shortcut: for 1M sensors I need a better UI
-func (cp *ControlPanel) sensors(w http.ResponseWriter, req *http.Request) {
+func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
+	fmt.Fprintf(w, "%12s %12s %12 %12s", "sensor", "weekly max", "weekly min", "weekly average")
 	for peer, stat := range cp.dataPath.peersStats {
 		result := stat.getResult(true)
-		fmt.Fprintf(w, "%v daily averages %v, max %d, min %d\n", peer, result.results, result.max, result.min)
+		fmt.Fprintf(w, "%12v %12d %12d %12d\n", peer, result.max, result.min, result.average)
+	}
+}
+
+func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
+	w.Header().Add("Content-Type", "text/plain")
+
+	fmt.Fprintf(w, "%12s %12 %12s", "daily max", "daily min", "daily average")
+	for peer, stat := range cp.dataPath.peersStats {
+		result := stat.getResult(true)
+		fmt.Fprintf(w, "%v daily averages %v, weeklyMax %d, min %d\n", peer, result.results, result.max, result.min)
 	}
 }
 
@@ -36,7 +47,7 @@ func writeLink(w http.ResponseWriter, ref string) {
 
 func (cp *ControlPanel) help(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
-	links := []string{"sensors", "totals", "exit"}
+	links := []string{"sensorsweekly", "sensorsdaily", "totals", "exit"}
 	for _, link := range links {
 		writeLink(w, link)
 	}
@@ -51,7 +62,8 @@ func (cp *ControlPanel) exit(w http.ResponseWriter, req *http.Request) {
 func (cp *ControlPanel) start() error {
 	log.Printf("Starting sever %s", cp.hostname)
 	http.HandleFunc("/totals", cp.totals)
-	http.HandleFunc("/sensors", cp.sensors)
+	http.HandleFunc("/sensorsweekly", cp.sensorsWeekly)
+	http.HandleFunc("/sensorsdaily", cp.sensorsDaily)
 	http.HandleFunc("/exit", cp.exit)
 	http.HandleFunc("/", cp.help)
 

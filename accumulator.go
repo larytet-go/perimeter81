@@ -25,6 +25,7 @@ type Result struct {
 	max     uint64
 	min     uint64
 	results []uint64
+	average uint64
 }
 
 const DaysInWeek = 7
@@ -79,6 +80,7 @@ func (a *Accumulator) getResult(average bool) Result {
 	results := make([]uint64, size)
 	max := uint64(0)
 	var min uint64 = math.MaxUint64
+	windowSumm := uint64(0)
 	for i := uint64(0); i < size; i++ {
 		cursor = a.incCursor(cursor)
 		updates := a.counters[cursor].updates
@@ -98,15 +100,21 @@ func (a *Accumulator) getResult(average bool) Result {
 				min = result
 			}
 			results[i] = result
+			windowSumm += result
 		} else {
 			results[i] = 0
 		}
+	}
+	windowAverage := uint64(0)
+	if size > 0 {
+		windowAverage = windowSumm / size
 	}
 	return Result{
 		results: results,
 		nonzero: nonzero,
 		max:     max,
 		min:     min,
+		average: windowAverage,
 	}
 }
 
