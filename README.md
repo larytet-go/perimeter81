@@ -29,7 +29,9 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 300 lines in Go? **isn't it too trivial?**
 
-# Software components
+# Software 
+
+## Components
 
 * Lockfree hashtable "Ehernet address to sensor index"
 * Lockfree hashtable "sensor index to Eternet address"
@@ -37,8 +39,15 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * A single thread processing sensors reports
 * An HTTP server serving reports
 
+## Build
+
+```
+go fmt ./... && go build . && go test -failfast -v .
+```
+
 ## Links
 
 * https://github.com/larytet-go/accumulator/blob/master/accumulator.go
 * https://css.bz/2016/12/08/go-raw-sockets.html
 * https://github.com/larytet-go/hashtable
+* https://gobyexample.com/http-servers
