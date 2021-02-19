@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"syscall"
 )
 
 type ControlPanel struct {
@@ -57,11 +58,19 @@ type DataPath struct {
 	exitFlag        bool
 }
 
-func (dp *DataPath) start() {
+func (dp *DataPath) start() (error) {
+	rawSocket, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, syscall.ETH_P_ALL)
+	if err != nil {
+		return err
+	}
+
+	defer syscall.Close(rawSocket)
+
 	for !dp.exitFlag {
 
 	}
 	dp.completed <- struct{}{}
+	return
 }
 
 func main() {

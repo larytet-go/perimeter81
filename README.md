@@ -5,12 +5,13 @@
 A sever processing data from the temperature sensors in the building.
 The server collects daily and weekly max/min/avg
 
-## Assumptions I
+## Assumptions "top down"
 
 * Size of a sensor 5 cm<sup>2</sup>
 * 100 floors building, 200 m<sup>2</sup> floor
 * Sensors installed on the ceiling and the floor 
 * Data packet is 64 bytes Ethernet without preamble and interframe gap
+* Packet loss is not critical
 
 Maximum amount of sensors is 800K/floor or 80M sensors in the building.
 If all sensors report once every second the sever processes 80M packets/s for a budget of 10 micros/packet
@@ -21,11 +22,12 @@ Calculating simple average, max, min requires collecting of data in a sliding wi
 
 Time series data base, custom C code: **this is not achievable in 3 hours of coding**
 
-## Assumptions II
+## Assumptions "bottom up"
 
 * 1TB of RAM, 600KB per sensor means the hard limit of 1M sensors
-* 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
+* Packet loss is not critical
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
+* 1M packets/s for the time budget 1ms/packet Ehernet/UDP will do
 
 300 lines in Go? **isn't it too trivial?**
 
@@ -57,3 +59,4 @@ curl localhost:8093/sensors
 * https://css.bz/2016/12/08/go-raw-sockets.html
 * https://github.com/larytet-go/hashtable
 * https://gobyexample.com/http-servers
+* https://stackoverflow.com/questions/18427655/use-raw-sockets-in-go
