@@ -84,8 +84,9 @@ func (p Peer) getID() uint64 {
 }
 
 // Rely on the uniqueness of the IPv4 address in LAN
-func (p Peer) getHash() {
-	return p.getID() && ((uint64(1) << 32) - 1)
+func (p Peer) getHash() uint32 {
+	hash :=  p.getID() && ((uint64(1) << 32) - 1)
+	return uint32(hash)
 }
 
 func (dp *DataPath) addPeer(peer *UDPAddr) {
