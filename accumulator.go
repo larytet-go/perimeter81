@@ -31,12 +31,10 @@ type Result struct {
 	average       []uint64
 }
 
-const DaysInWeek = 7
-
-func NewAccumulator() *Accumulator {
+func NewAccumulator(size uint64) *Accumulator {
 	a := &Accumulator{
-		counters: make([]accumulatorCounter, DaysInWeek),
-		size:     DaysInWeek,
+		counters: make([]accumulatorCounter, size),
+		size:     size,
 		count:    0,
 	}
 	a.Reset()

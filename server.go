@@ -6,7 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -92,14 +94,18 @@ type DataPath struct {
 	exitFlag  bool
 
 	// Shortcut: GC will kill this code, should use zero allocation map
+	// and reference free Accumulator
 	peersStats map[string](*Accumulator)
 
 	// 24 hours
 	tickInterval time.Duration
+
+	// 7 days
+	days uint64
 }
 
 func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
-	accumulator := NewAccumulator()
+	accumulator := NewAccumulator(dp.days)
 	dp.peersStats[peer.String()] = accumulator
 	// log.Printf("Add peer %v\n", peer)
 	return accumulator
@@ -160,15 +166,41 @@ func (dp *DataPath) start() error {
 	return nil
 }
 
+func boolEnv(env string, defaultValue bool) bool {
+	envVar := os.Getenv(env)
+	if envVar == "" {
+		return defaultValue
+	}
+
+	b, err := strconv.ParseBool(envVar)
+	if err != nil {
+		return defaultValue
+	}
+
+	return b
+}
+
 func main() {
 	hostnameControl := ":8093"
 	hostnameData := ":8094"
 
+	modeDemo := boolEnv("MODE_DEMO", false)
 	dp := &DataPath{
 		hostname:     hostnameData,
 		completed:    make(chan struct{}),
 		peersStats:   make(map[string](*Accumulator)),
-		tickInterval: 2 * time.Second, // Use time.Day (24 hours) in the real system
+		tickInterval: 24 * time.Hour,
+		days:         7,
+	}
+	if modeDemo {
+		log.Println("Demo mode")
+		dp = &DataPath{
+			hostname:     hostnameData,
+			completed:    make(chan struct{}),
+			peersStats:   make(map[string](*Accumulator)),
+			tickInterval: 2 * time.Second,
+			days:         7,
+		}
 	}
 
 	// start data path loop
