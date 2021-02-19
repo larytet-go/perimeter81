@@ -119,9 +119,12 @@ func (dp *DataPath) start() error {
 }
 
 func main() {
+	hostname := ":8093"
+
 	dp := &DataPath{
-		completed:  make(chan struct{}),
-		peersStats: make(map[*net.UDPAddr](*Accumulator)),
+		ipInterface: hostname,
+		completed:   make(chan struct{}),
+		peersStats:  make(map[*net.UDPAddr](*Accumulator)),
 	}
 
 	// start data path loop
@@ -129,10 +132,17 @@ func main() {
 
 	// start control loop
 	cp := &ControlPanel{
-		ipInterface: ":8093",
+		ipInterface: hostname,
 		completed:   make(chan struct{}),
 	}
 	go cp.start()
+
+	sm := &SensorMock{
+		hostname: hostname,
+		sensors:  2,
+		interval: time.Second,
+	}
+	go sm.start()
 
 	<-cp.completed
 	dp.exitFlag = true
