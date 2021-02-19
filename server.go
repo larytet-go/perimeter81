@@ -133,6 +133,7 @@ func (dp *DataPath) tick24h(exitFlag *bool) {
 			peerStat.Tick()
 		}
 	}
+	// It takes time to get to this line 
 	log.Printf("24h ticker exiting\n")
 }
 
