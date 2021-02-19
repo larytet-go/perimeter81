@@ -42,7 +42,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * A 24h ticker shifting the sliding window every day
 * An HTTP server serving reports
 * Sensor mock reporting temperature in **milliKelvins**
-* Shortcut - use slower Golang map instead of zero memory allocation hashtable
+* Shortcut: use slower Golang map instead of zero memory allocation hashtable
 
 ## Build and run
 
