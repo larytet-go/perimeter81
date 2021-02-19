@@ -36,8 +36,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 ## Components
 
-* Lockfree hashtable "Ehernet address to sensor index"
-* Lockfree hashtable "sensor index to Eternet address"
+* Lockfree hashtable "Peer IP to sensor stats"
 * 600K lock free accumulators
 * A single thread processing sensors reports
 * An HTTP server serving reports
