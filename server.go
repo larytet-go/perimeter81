@@ -10,9 +10,9 @@ import (
 )
 
 type ControlPanel struct {
-	ipInterface string
-	completed   chan struct{}
-	dataPath    *DataPath
+	hostname  string
+	completed chan struct{}
+	dataPath  *DataPath
 }
 
 func (cp *ControlPanel) totals(w http.ResponseWriter, req *http.Request) {
@@ -49,18 +49,18 @@ func (cp *ControlPanel) exit(w http.ResponseWriter, req *http.Request) {
 }
 
 func (cp *ControlPanel) start() error {
-	log.Printf("Starting sever %s", cp.ipInterface)
+	log.Printf("Starting sever %s", cp.hostname)
 	http.HandleFunc("/totals", cp.totals)
 	http.HandleFunc("/sensors", cp.totals)
 	http.HandleFunc("/exit", cp.exit)
 	http.HandleFunc("/", cp.help)
 
-	err := http.ListenAndServe(cp.ipInterface, nil)
+	err := http.ListenAndServe(cp.hostname, nil)
 	return err
 }
 
 type DataPath struct {
-	ipInterface string
+	hostname string
 
 	completed chan struct{}
 	exitFlag  bool
@@ -93,19 +93,23 @@ func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 // Shortcut: loop over all accumulator can take time
 func (dp *DataPath) tick24h(exitFlag *bool) {
 	ticker := time.NewTicker(dp.tickInterval)
-	for !(*exitFlag){
+	for !(*exitFlag) {
 		<-ticker.C
 		for _, peerStat := range dp.peersStats {
 			peerStat.Tick()
 		}
 	}
+	log.Printf("24h ticker exiting\n")
 }
 
 func (dp *DataPath) start() error {
-	s, err := net.ResolveUDPAddr("udp4", dp.ipInterface)
+	log.Printf("Data path resolve %s\n", dp.hostname)
+	s, err := net.ResolveUDPAddr("udp4", dp.hostname)
 	if err != nil {
 		return err
 	}
+
+	log.Printf("Data path listen %s\n", dp.hostname)
 	connection, err := net.ListenUDP("udp4", s)
 	if err != nil {
 		return err
@@ -122,6 +126,7 @@ func (dp *DataPath) start() error {
 		}
 		dp.processPacket(count, peer, buffer)
 	}
+	log.Printf("Data path exiting\n")
 	dp.completed <- struct{}{}
 	return nil
 }
@@ -130,7 +135,7 @@ func main() {
 	hostname := ":8093"
 
 	dp := &DataPath{
-		ipInterface:  hostname,
+		hostname:     hostname,
 		completed:    make(chan struct{}),
 		peersStats:   make(map[*net.UDPAddr](*Accumulator)),
 		tickInterval: 20 * time.Second, // 24 * time.Hour
@@ -141,9 +146,9 @@ func main() {
 
 	// start control loop
 	cp := &ControlPanel{
-		ipInterface: hostname,
-		completed:   make(chan struct{}),
-		dataPath:    dp,
+		hostname:  hostname,
+		completed: make(chan struct{}),
+		dataPath:  dp,
 	}
 	go cp.start()
 

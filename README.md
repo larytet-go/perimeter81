@@ -47,7 +47,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 ## Build
 
 ```
-go fmt ./... && go build . && go test -failfast -v .
+go fmt ./... && go build . 
 ```
 
 ## Usage

@@ -22,12 +22,14 @@ type SensorMock struct {
 }
 
 func (sm *SensorMock) start() error {
+	log.Printf("Mock resolve %s\n", sm.hostname)
 	s, err := net.ResolveUDPAddr("udp4", sm.hostname)
 	if err != nil {
 		log.Printf("Failed to resolve %s %v", sm.hostname, err)
 		return err
 	}
 
+	log.Printf("Mock dial %s\n", sm.hostname)
 	c, err := net.DialUDP("udp4", nil, s)
 	if err != nil {
 		log.Printf("Failed to dial %s %v", sm.hostname, err)
@@ -45,6 +47,7 @@ func (sm *SensorMock) start() error {
 		}
 	}
 
+	log.Printf("Mock exiting\n")
 	sm.completed <- struct{}{}
 	return nil
 }
