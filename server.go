@@ -162,6 +162,7 @@ func (dp *DataPath) start() error {
 		}
 		dp.processPacket(count, peer, buffer)
 	}
+	// Shortcut: if there is no connected sensors I will not get here
 	log.Printf("Data path exiting\n")
 	dp.completed <- struct{}{}
 	return nil
