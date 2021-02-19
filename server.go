@@ -37,6 +37,17 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 
 func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
+
+	fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", "sensor", "days", "daily max", "daily min", "daily average")
+	for peer, stat := range cp.dataPath.peersStats {
+		result := stat.getResult(true)
+		if !result.nonzero {
+			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
+			continue
+		}
+		counters := &stat.counters
+		fmt.Fprintf(w, "%20v %20v %20v %20v %20v\n", peer, len(result.results), counters.max, counters.min, counters.summ/counters.updates)
+	}
 }
 
 func writeLink(w http.ResponseWriter, ref string) {
