@@ -78,6 +78,7 @@ while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsdaily;sle
 * https://github.com/larytet-go/unsafepool
 * https://developers.mattermost.com/blog/hands-on-iouring-go/  - io_uring
 * https://github.com/google/gvisor  - user space Linux kernel including TCP/IP stack
+* https://github.com/vlang/v/blob/master/examples/concurrency/concurrency.v  - C looking like Go
 
 Some caches
 
