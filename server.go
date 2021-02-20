@@ -277,8 +277,8 @@ func main() {
 
 	sm := &SensorMock{
 		hostname:  hostnameData,
-		sensors:   400,
-		interval:  0 * time.Second,
+		sensors:   40,
+		interval:  1 * time.Second,
 		completed: make(chan struct{}),
 	}
 	go sm.start()
