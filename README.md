@@ -16,7 +16,7 @@ The server collects daily and weekly max/min/avg
 Maximum amount of sensors is 800K/floor or 80M sensors in the building.
 If all sensors report once every second the sever processes 80M packets/s for a budget of 15 nanos/packet
 
-The server needs 40Gb/s connection. The server has to process the incoming packets at the line rate 
+The server needs 40Gb/s connection. The server has to process the incoming packets at the line rate (C/C++ or V is inevitable)
 
 Calculating simple average, max, min requires collecting of data in a sliding window. 
 The server is going to keep 80M sliding windows (7 days X 32 bytes) 250 bytes each for the total of 15GB of memory. 
