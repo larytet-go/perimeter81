@@ -29,6 +29,31 @@ func milliKelvin2CelsiusSlice(data []uint64) []float64 {
 	return result
 }
 
+type ResultCelcius struct {
+	nonzero bool
+
+	windowMax     float64
+	windowMin     float64
+	windowAverage float64
+
+	max     []float64
+	min     []float64
+	average []float64
+}
+
+func milliKelvin2CelsiusResult(result Result) ResultCelcius {
+	resultCelcius := ResultCelcius{
+		nonzero:       result.nonzero,
+		windowMax:     milliKelvin2Celsius(result.windowMax),
+		windowMin:     milliKelvin2Celsius(result.windowMin),
+		windowAverage: milliKelvin2Celsius(result.windowAverage),
+		max:           milliKelvin2CelsiusSlice(result.max),
+		min:           milliKelvin2CelsiusSlice(result.min),
+		average:       milliKelvin2CelsiusSlice(result.average),
+	}
+	return resultCelcius
+}
+
 type ControlPanel struct {
 	hostname  string
 	completed chan struct{}
@@ -50,22 +75,22 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 	w.Header().Add("Content-Type", "text/plain")
 
 	fmt.Fprintf(w, "%20v %5v %20v %20v %20v (Celcius)\n", "sensor", "days", "weekly max", "weekly min", "weekly average")
-	weeklyAverage := uint64(0)
+	weeklyAverage := float64(0)
 	peers := getPeers(cp.dataPath.peersStats)
 	for _, peer := range peers {
 		stat := cp.dataPath.peersStats[peer]
-		result := stat.getResult()
+		result := milliKelvin2CelsiusResult(stat.getResult())
 		if !result.nonzero {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
 		weeklyAverage += result.windowAverage
 		fmt.Fprintf(w, "%20v %5v %20.1f %20.1f %20.1f\n", peer, len(result.average),
-			milliKelvin2Celsius(result.windowMax), milliKelvin2Celsius(result.windowMin),
-			milliKelvin2Celsius(result.windowAverage))
+			(result.windowMax), (result.windowMin),
+			(result.windowAverage))
 	}
 	if len(peers) > 0 {
-		fmt.Fprintf(w, "weekly average %v\n", milliKelvin2Celsius(weeklyAverage/uint64(len(peers))))
+		fmt.Fprintf(w, "weekly average %0.1f\n", (weeklyAverage / float64(len(peers))))
 	}
 }
 
@@ -75,15 +100,15 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "%20v %5v %20v %20v %20v (Celcius)\n", "sensor", "days", "daily max", "daily min", "daily average")
 	for _, peer := range getPeers(cp.dataPath.peersStats) {
 		stat := cp.dataPath.peersStats[peer]
-		result := stat.getResult()
+		result := milliKelvin2CelsiusResult(stat.getResult())
 		if !result.nonzero {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
 		fmt.Fprintf(w, "%20v %5v %4.1f %4.1f %4.1f\n", peer, len(result.average),
-			milliKelvin2CelsiusSlice(result.max),
-			milliKelvin2CelsiusSlice(result.min),
-			milliKelvin2CelsiusSlice(result.average))
+			(result.max),
+			(result.min),
+			(result.average))
 	}
 }
 
