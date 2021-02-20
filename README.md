@@ -48,9 +48,8 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 ## Measured perforamce 
 
-Mock 200K packets/s per core
-Server: 600K packets/s  per core
-
+Both mock and srever run under the same machine kernel and enjoy back pressure. Every mock is a single thread.
+Server's data path is a single thread. 4 mocks and one server hit 600K packets/s. This is reasonably close to the stated 1M target.
 
 ## Build and run
 
