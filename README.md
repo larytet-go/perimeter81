@@ -21,7 +21,7 @@ The server needs 40Gb/s connection. The server has to process the incoming packe
 Calculating simple average, max, min requires collecting of data in a sliding window. 
 The server is going to keep 80M sliding windows (7 days X 32 bytes) 250 bytes each for the total of 15GB of memory. 
 
-Time series data base, custom C code: **this is not achievable in 3 hours of coding**
+Time series data base, custom C code, kernel bypass: **this is not achievable in 3 hours of coding**
 
 ## Constraints "bottom up"
 
