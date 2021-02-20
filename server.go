@@ -85,9 +85,7 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 			continue
 		}
 		weeklyAverage += result.windowAverage
-		fmt.Fprintf(w, "%20v %5v %20.1f %20.1f %20.1f\n", peer, len(result.average),
-			(result.windowMax), (result.windowMin),
-			(result.windowAverage))
+		fmt.Fprintf(w, "%20v %5v %20.1f %20.1f %20.1f\n", peer, len(result.average), result.windowMax, result.windowMin, result.windowAverage)
 	}
 	if len(peers) > 0 {
 		fmt.Fprintf(w, "weekly average %0.1f\n", (weeklyAverage / float64(len(peers))))
@@ -105,10 +103,7 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %5v %4.1f %4.1f %4.1f\n", peer, len(result.average),
-			(result.max),
-			(result.min),
-			(result.average))
+		fmt.Fprintf(w, "%20v %5v %4.1f %4.1f %4.1f\n", peer, len(result.average), result.max, result.min, result.average)
 	}
 }
 
