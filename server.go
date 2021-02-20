@@ -20,6 +20,15 @@ func milliKelvin2Celsius(mk uint64) float64 {
 	return ((float64(mk) - 1000*273.15) / 1000)
 }
 
+func milliKelvin2CelsiusSlice(data []uint64) []float64 {
+	result := make([]float64, len(data))
+	for idx, mk := range data {
+		result[idx] = milliKelvin2Celsius(mk)
+	}
+
+	return result
+}
+
 type ControlPanel struct {
 	hostname  string
 	completed chan struct{}
@@ -63,7 +72,7 @@ func (cp *ControlPanel) sensorsWeekly(w http.ResponseWriter, req *http.Request) 
 func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
-	fmt.Fprintf(w, "%20v %5v %20v %20v %20v (milliKelvin)\n", "sensor", "days", "daily max", "daily min", "daily average")
+	fmt.Fprintf(w, "%20v %5v %20v %20v %20v (Celcius)\n", "sensor", "days", "daily max", "daily min", "daily average")
 	for _, peer := range getPeers(cp.dataPath.peersStats) {
 		stat := cp.dataPath.peersStats[peer]
 		result := stat.getResult()
@@ -71,10 +80,10 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %5v %v %v %v\n", peer, len(result.average),
-			(result.max),
-			(result.min),
-			(result.average))
+		fmt.Fprintf(w, "%20v %5v %5v %5v %5v\n", peer, len(result.average),
+			milliKelvin2CelsiusSlice(result.max),
+			milliKelvin2CelsiusSlice(result.min),
+			milliKelvin2CelsiusSlice(result.average))
 	}
 }
 
