@@ -41,6 +41,11 @@ type ResultCelcius struct {
 	average []float64
 }
 
+var statistics struct {
+	packetsTotal uint64
+	startTime time.Time
+}
+
 func milliKelvin2CelsiusResult(result Result) ResultCelcius {
 	resultCelcius := ResultCelcius{
 		nonzero:       result.nonzero,
@@ -107,6 +112,14 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func (cp *ControlPanel) stats(w http.ResponseWriter, req *http.Request) {
+	w.Header().Add("Content-Type", "text/plain")
+
+	elapsed := time.Since(statistics.startTime)
+	rate := float64(statistics.packetsTotal)/(float64(elapsed)/time.Second)
+	fmt.Fprintf(w, "packetsTotal %20v\nrate %.0f\n", statistics.packetsTotal, rate)
+}
+
 func writeLink(w http.ResponseWriter, ref string) {
 	fmt.Fprintf(w, "<br><a href=\"%s\">%s<a>", ref, ref)
 }
@@ -130,6 +143,7 @@ func (cp *ControlPanel) start() error {
 	http.HandleFunc("/sensorsweekly", cp.sensorsWeekly)
 	http.HandleFunc("/sensorsdaily", cp.sensorsDaily)
 	http.HandleFunc("/exit", cp.exit)
+	http.HandleFunc("/stats", cp.stats)
 	http.HandleFunc("/", cp.help)
 
 	err := http.ListenAndServe(cp.hostname, nil)
@@ -161,6 +175,7 @@ func (dp *DataPath) addPeer(peer *net.UDPAddr) *Accumulator {
 }
 
 func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
+	statistics.packetsTotal++
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint32(buffer[:4])
 	// Shortcur: peer.String() is slow. I can do better producing uint64 composition of (ipv4,port)
@@ -203,6 +218,7 @@ func (dp *DataPath) start() error {
 
 	log.Printf("Data path enter loop %s\n", dp.hostname)
 	buffer := make([]byte, 128)
+	statistics.startTime = time.Now()
 	for !dp.exitFlag {
 		count, peer, err := connection.ReadFromUDP(buffer)
 		if err != nil {
@@ -261,7 +277,7 @@ func main() {
 
 	sm := &SensorMock{
 		hostname:  hostnameData,
-		sensors:   40,
+		sensors:   10000,
 		interval:  1 * time.Second,
 		completed: make(chan struct{}),
 	}
