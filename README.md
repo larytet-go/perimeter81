@@ -46,6 +46,10 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * Shortcut: use slower Golang map instead of zero memory allocation hashtable
 * Shortcut: ignore race condition between the HTTP server and the DataPath when accessing the accumulators
 
+## Measured perforamce 
+
+Single core: 300K packets/s 
+
 
 ## Build and run
 

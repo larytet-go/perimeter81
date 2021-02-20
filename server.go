@@ -43,7 +43,7 @@ type ResultCelcius struct {
 
 var statistics struct {
 	packetsTotal uint64
-	startTime time.Time
+	startTime    time.Time
 }
 
 func milliKelvin2CelsiusResult(result Result) ResultCelcius {
@@ -116,7 +116,7 @@ func (cp *ControlPanel) stats(w http.ResponseWriter, req *http.Request) {
 	w.Header().Add("Content-Type", "text/plain")
 
 	elapsed := time.Since(statistics.startTime)
-	rate := float64(statistics.packetsTotal)/(float64(elapsed)/time.Second)
+	rate := float64(statistics.packetsTotal) / (float64(elapsed) / float64(time.Second))
 	fmt.Fprintf(w, "packetsTotal %20v\nrate %.0f\n", statistics.packetsTotal, rate)
 }
 
@@ -277,8 +277,8 @@ func main() {
 
 	sm := &SensorMock{
 		hostname:  hostnameData,
-		sensors:   10000,
-		interval:  1 * time.Second,
+		sensors:   400,
+		interval:  0 * time.Second,
 		completed: make(chan struct{}),
 	}
 	go sm.start()
