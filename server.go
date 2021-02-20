@@ -80,7 +80,7 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 			fmt.Fprintf(w, "%20v %20v\n", peer, "not enough data")
 			continue
 		}
-		fmt.Fprintf(w, "%20v %5v %5v %5v %5v\n", peer, len(result.average),
+		fmt.Fprintf(w, "%20v %5v %6v %6v %6v\n", peer, len(result.average),
 			milliKelvin2CelsiusSlice(result.max),
 			milliKelvin2CelsiusSlice(result.min),
 			milliKelvin2CelsiusSlice(result.average))

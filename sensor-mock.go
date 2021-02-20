@@ -39,7 +39,8 @@ func (sm *SensorMock) start() error {
 	for !sm.exitFlag {
 		time.Sleep(sm.interval)
 		for _, connection := range connections {
-			temperature := celsius2MilliKelvin(float64(rand.Intn(70))) // -273C to +70C
+			decimalPoints := float64(rand.Intn(9)) / 10
+			temperature := celsius2MilliKelvin(float64(rand.Intn(70)) + decimalPoints) // 0C to +69.9C
 			data := make([]byte, 4)
 			binary.BigEndian.PutUint32(data, uint32(temperature))
 			count, err := connection.Write(data)
