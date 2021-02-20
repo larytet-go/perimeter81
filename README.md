@@ -70,3 +70,15 @@ while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsdaily;sle
 * https://stackoverflow.com/questions/18427655/use-raw-sockets-in-go
 * https://www.linode.com/docs/guides/developing-udp-and-tcp-clients-and-servers-in-go/
 * https://github.com/larytet-go/unsafepool
+
+Some caches
+
+* https://github.com/patrickmn/go-cache
+* https://github.com/allegro/bigcache - memory management
+* https://github.com/coocood/freecache  - memory management
+* https://github.com/koding/cache
+* https://github.com/sch00lb0y/vegamcache
+* https://github.com/OneOfOne/cmap
+* https://github.com/larytet/mcachego - memory management
+* https://github.com/golang/groupcache
+* https://github.com/capnproto/capnproto/blob/master/c++/src/kj/map.h
