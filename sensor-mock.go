@@ -3,15 +3,10 @@ package main
 import (
 	"encoding/binary"
 	"log"
-	"math"
 	"math/rand"
 	"net"
 	"time"
 )
-
-func celsiusToMilliKelvins(v float64) int {
-	return int(math.Trunc(1000 * (v + 273.15)))
-}
 
 type SensorMock struct {
 	hostname  string
@@ -44,7 +39,7 @@ func (sm *SensorMock) start() error {
 	for !sm.exitFlag {
 		time.Sleep(sm.interval)
 		for _, connection := range connections {
-			temperature := celsiusToMilliKelvins(float64(rand.Intn(70))) // -273C to +70C
+			temperature := celsius2MilliKelvin(float64(rand.Intn(70))) // -273C to +70C
 			data := make([]byte, 4)
 			binary.BigEndian.PutUint32(data, uint32(temperature))
 			count, err := connection.Write(data)
