@@ -77,6 +77,7 @@ while [ 1 ];do echo -en "\\033[0;0H";curl http://localhost:8093/sensorsdaily;sle
 * https://www.linode.com/docs/guides/developing-udp-and-tcp-clients-and-servers-in-go/
 * https://github.com/larytet-go/unsafepool
 * https://developers.mattermost.com/blog/hands-on-iouring-go/  - io_uring
+* https://github.com/google/gvisor/tree/go  - user space Linux kernel including TCP/IP stack
 
 Some caches
 
