@@ -48,7 +48,8 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 ## Measured perforamce 
 
-Single core: 300K packets/s 
+Mock 200K packets/s per core
+Server: 600K packets/s  per core
 
 
 ## Build and run
