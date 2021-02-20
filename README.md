@@ -14,7 +14,7 @@ The server collects daily and weekly max/min/avg
 * Packet loss is not critical
 
 Maximum amount of sensors is 800K/floor or 80M sensors in the building.
-If all sensors report once every second the sever processes 80M packets/s for a budget of 10 micros/packet
+If all sensors report once every second the sever processes 80M packets/s for a budget of 15 nanos/packet
 
 The server needs 40Gb/s connection. The server has to process the incoming packets at the line rate 
 
@@ -25,7 +25,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 
 ## Constraints "bottom up"
 
-* 0.5GB of RAM, 256B per sensor means the hard limit of 1M sensors
+* 0.5GB of RAM, 256B per sensor means the hard limit of 1M sensors, budget 1micro/packet
 * Packet loss is not critical
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
 * 1M packets/s for the time budget 1ms/packet. **Ehernet/UDP will do**
@@ -49,7 +49,7 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 ## Perforamce 
 
 Both mock and srever run under the same machine kernel and enjoy back pressure. Every mock is a single thread.
-Server's data path is a single thread. 4 mocks and one server hit 600K packets/s. This is reasonably close to the stated 1M target.
+Server's data path is a single thread. 4 mocks and one server hit 600K packets/s. It takes ~2micros to process a packet on a 2GHz core. This is reasonably close to the stated 1M target. 
 
 For a large number of sensors hashtable performance is dominated by the data cache miss. 
 
