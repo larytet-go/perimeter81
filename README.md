@@ -46,10 +46,12 @@ Time series data base, custom C code: **this is not achievable in 3 hours of cod
 * Shortcut: use slower Golang map instead of zero memory allocation hashtable
 * Shortcut: ignore race condition between the HTTP server and the DataPath when accessing the accumulators
 
-## Measured perforamce 
+## Perforamce 
 
 Both mock and srever run under the same machine kernel and enjoy back pressure. Every mock is a single thread.
 Server's data path is a single thread. 4 mocks and one server hit 600K packets/s. This is reasonably close to the stated 1M target.
+
+For a large number of sensors hashtable performance is dominated by the data cache miss. 
 
 ## Build and run
 
