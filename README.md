@@ -51,6 +51,12 @@ Time series data base, custom C code, kernel bypass/io_uring: **this is not achi
 Both mock and srever run under the same machine kernel and enjoy back pressure. Every mock is a single thread.
 Server's data path is a single thread. 4 mocks and one server hit 600K packets/s. It takes ~2micros to process a packet on a 3.5GHz Ryzen core. This is reasonably close to the stated 1M target. 
 
+Further improvements can come from:
+
+* allocating 7 days accumulators in row instead of columns and reducing data cache misses.
+* use a map with a faster lookup
+* use int key instead of string in the map
+
 For a large number of sensors hashtable performance is dominated by the data cache miss. 
 
 ## Build and run
