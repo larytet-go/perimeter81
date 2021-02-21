@@ -12,53 +12,6 @@ import (
 	"time"
 )
 
-func celsius2MilliKelvin(c float64) uint64 {
-	return uint64((1000 * (c + 273.15)))
-}
-
-func milliKelvin2Celsius(mk uint64) float64 {
-	return ((float64(mk) - 1000*273.15) / 1000)
-}
-
-func milliKelvin2CelsiusSlice(data []uint64) []float64 {
-	result := make([]float64, len(data))
-	for idx, mk := range data {
-		result[idx] = milliKelvin2Celsius(mk)
-	}
-
-	return result
-}
-
-type ResultCelcius struct {
-	nonzero bool
-
-	windowMax     float64
-	windowMin     float64
-	windowAverage float64
-
-	max     []float64
-	min     []float64
-	average []float64
-}
-
-var statistics struct {
-	packetsTotal uint64
-	startTime    time.Time
-}
-
-func milliKelvin2CelsiusResult(result Result) ResultCelcius {
-	resultCelcius := ResultCelcius{
-		nonzero:       result.nonzero,
-		windowMax:     milliKelvin2Celsius(result.windowMax),
-		windowMin:     milliKelvin2Celsius(result.windowMin),
-		windowAverage: milliKelvin2Celsius(result.windowAverage),
-		max:           milliKelvin2CelsiusSlice(result.max),
-		min:           milliKelvin2CelsiusSlice(result.min),
-		average:       milliKelvin2CelsiusSlice(result.average),
-	}
-	return resultCelcius
-}
-
 type ControlPanel struct {
 	hostname  string
 	completed chan struct{}
@@ -110,6 +63,11 @@ func (cp *ControlPanel) sensorsDaily(w http.ResponseWriter, req *http.Request) {
 		}
 		fmt.Fprintf(w, "%20v %5v %4.1f %4.1f %4.1f\n", peer, len(result.average), result.max, result.min, result.average)
 	}
+}
+
+var statistics struct {
+	packetsTotal uint64
+	startTime    time.Time
 }
 
 func (cp *ControlPanel) stats(w http.ResponseWriter, req *http.Request) {

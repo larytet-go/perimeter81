@@ -146,3 +146,45 @@ func (a *Accumulator) Tick() {
 	a.counters[cursor].updates = 0
 	a.count++
 }
+
+func celsius2MilliKelvin(c float64) uint64 {
+	return uint64((1000 * (c + 273.15)))
+}
+
+func milliKelvin2Celsius(mk uint64) float64 {
+	return ((float64(mk) - 1000*273.15) / 1000)
+}
+
+func milliKelvin2CelsiusSlice(data []uint64) []float64 {
+	result := make([]float64, len(data))
+	for idx, mk := range data {
+		result[idx] = milliKelvin2Celsius(mk)
+	}
+
+	return result
+}
+
+type ResultCelcius struct {
+	nonzero bool
+
+	windowMax     float64
+	windowMin     float64
+	windowAverage float64
+
+	max     []float64
+	min     []float64
+	average []float64
+}
+
+func milliKelvin2CelsiusResult(result Result) ResultCelcius {
+	resultCelcius := ResultCelcius{
+		nonzero:       result.nonzero,
+		windowMax:     milliKelvin2Celsius(result.windowMax),
+		windowMin:     milliKelvin2Celsius(result.windowMin),
+		windowAverage: milliKelvin2Celsius(result.windowAverage),
+		max:           milliKelvin2CelsiusSlice(result.max),
+		min:           milliKelvin2CelsiusSlice(result.min),
+		average:       milliKelvin2CelsiusSlice(result.average),
+	}
+	return resultCelcius
+}
