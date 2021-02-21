@@ -14,7 +14,7 @@ type accumulatorCounter struct {
 // I keep a dedicated accumulator for every sensor or ~250 bytes/sensor
 // This accumulator is fast, but not thread safe. Race when
 // calling Tick() and Add() and in between calls to Add() produces not reliable result
-// Shoortcut: it is not data cache optimized. I want counters ordered by day of week and not by sensor
+// Shoortcut: it is not data cache efficient. I want counters ordered by day of week and not by sensor
 type Accumulator struct {
 	// Shortcut: I need statically allocated arrays/memory pool
 	counters []accumulatorCounter
