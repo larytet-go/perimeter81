@@ -46,7 +46,7 @@ Time series data base, custom C code, kernel bypass/io_uring: **this is not achi
 * Shortcut: use slower Golang map instead of zero memory allocation hashtable
 * Shortcut: ignore race condition between the HTTP server and the DataPath when accessing the accumulators
 
-## Perforamce 
+## Performance 
 
 Both mock and srever run under the same machine kernel and enjoy back pressure. Every mock is a single thread.
 Server's data path is a single thread. 4 mocks and one server hit 600K packets/s. It takes ~2micros to process a packet on a 3.5GHz Ryzen core. This is reasonably close to the stated 1M target. 
