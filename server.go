@@ -146,7 +146,8 @@ func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 
 // 24 hours tick
 // Shortcut: ignore race condition in the accumulator which can lead to minor errors
-// Shortcut: loop over all accumulator can take time
+// Shortcut: loop over all accumulator creates lot of data caches misses 
+// 1M sensors can take a 100ms or so
 func (dp *DataPath) tick24h(exitFlag *bool) {
 	ticker := time.NewTicker(dp.tickInterval)
 	for !(*exitFlag) {
