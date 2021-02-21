@@ -28,7 +28,7 @@ Time series data base, custom C code, kernel bypass/io_uring: **this is not achi
 * 0.5GB of RAM, 256B per sensor means the hard limit of 1M sensors, budget 1micro/packet
 * Packet loss is not critical
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
-* 1M packets/s for the time budget 1ms/packet. **Ehernet/UDP will do**
+* 1M packets/s for the time budget 1micro/packet. **Ehernet/UDP will do**
 * HTTP vs UPD vs Ethernet. HTTP is buffered - there is a memory page for every socket. I do not see a good package for raw sockets in Go. This leaves UDP.
 * Socket ID or IP address/port? Socket ID can save a few cycles in the server, but introduces a requirement of uniqueness on the sensor side. 1M sensors means 20 bits subnet. It can be challending for a DHCP server if I use dynamic IP. Power up of the sensors creates a serious ARP/BOOTP storm.
 * Shortcut: Golang GC will kill the server keeping a map of 1M references, but I am doing it anyway. Zero allocation does not fit 3 hours developmemt deadline. Data cache efficient map? Not in 3 hours of coding either.
