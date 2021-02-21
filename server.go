@@ -136,11 +136,13 @@ func (dp *DataPath) processPacket(count int, peer *net.UDPAddr, buffer []byte) {
 	statistics.packetsTotal++
 	// Kelvin from zero to infinity
 	sensorReading := binary.BigEndian.Uint32(buffer[:4])
-	// Shortcur: peer.String() is slow. I can do better producing uint64 composition of (ipv4,port)
+	// Shortcut: peer.String() is slow. I can do better producing uint64 composition of (ipv4,port)
+	// This line is expected to dominate the server performance
 	peerStats, ok := dp.peersStats[peer.String()]
 	if !ok {
 		peerStats = dp.addPeer(peer)
 	}
+	// Data cache miss is likely here
 	peerStats.Add(uint64(sensorReading))
 }
 
