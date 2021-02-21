@@ -55,7 +55,7 @@ Further improvements can come from:
 
 * allocating 7 days accumulators in row instead of columns and reducing data cache misses.
 * use a map with a faster lookup
-* use int key instead of string in the map
+* use int key (sensord ID or IP+port) instead of string in the map
 
 For a large number of sensors hashtable performance is dominated by the data cache miss. 
 
