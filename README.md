@@ -29,9 +29,7 @@ Time series data base, custom C code, kernel bypass/io_uring: **this is not achi
 * Packet loss is not critical
 * 64 bytes/packet or 64MB/s or 1Gb/s connection
 * 1M packets/s for the time budget 1ms/packet. **Ehernet/UDP will do**
-* Shortcut: Golang GC will kill the server keeping a map of 1M entries, but I am doing it anyway. Zero allocation does not fit 3 hours developmemt deadline.
-
-Data cache efficient map? **not in 3 hours of coding**
+* Shortcut: Golang GC will kill the server keeping a map of 1M entries, but I am doing it anyway. Zero allocation does not fit 3 hours developmemt deadline. Data cache efficient map? Not in 3 hours of coding either.
 
 300 lines in Go? **isn't it too trivial?**
 
